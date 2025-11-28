@@ -15,7 +15,7 @@ A comprehensive MQTT broker testing tool built in Go.
 ### Build
 
 ```bash
-go build -o bin/testmqtt ./cmd/testmqtt
+go build -o bin/testmqtt .
 ```
 
 ### Run Conformance Tests
@@ -91,7 +91,7 @@ See `conformance/v3/COVERAGE.md` and `conformance/v5/TODO.md` for detailed cover
 
 ```
 testmqtt/
-├── cmd/testmqtt/          # Main application entry
+├── main.go                # Application entry point
 ├── internal/
 │   ├── cmd/               # CLI commands (cobra)
 │   └── conformance/       # Test runners
@@ -100,7 +100,7 @@ testmqtt/
 │   ├── v3/                # MQTT v3.1.1 tests (77 tests)
 │   └── v5/                # MQTT v5.0 tests (139 tests)
 ├── performance/           # Performance testing (TODO)
-└── spec/                  # MQTT specifications
+└── spec/                  # MQTT specifications (v3.1.1 & v5.0)
 ```
 
 ## Technologies Used

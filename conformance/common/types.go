@@ -4,6 +4,13 @@ import (
 	"time"
 )
 
+// Config holds configuration for conformance tests
+type Config struct {
+	Broker   string
+	Username string
+	Password string
+}
+
 // TestResult represents the outcome of a conformance test
 type TestResult struct {
 	Name     string
@@ -14,7 +21,7 @@ type TestResult struct {
 }
 
 // TestFunc is a function that runs a conformance test
-type TestFunc func(broker string) TestResult
+type TestFunc func(cfg Config) TestResult
 
 // TestGroup represents a collection of related tests
 type TestGroup struct {

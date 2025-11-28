@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"fmt"
 	"time"
 
@@ -23,7 +27,7 @@ func WillTests() TestGroup {
 // testWillMessage tests basic Will Message functionality [MQTT-3.1.2-9]
 // "If the Will Flag is set to 1, the Will Properties, Will Topic, and Will
 // Payload fields MUST be present in the Payload"
-func testWillMessage(broker string) TestResult {
+func testWillMessage(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Will Message Delivery",
@@ -38,7 +42,7 @@ func testWillMessage(broker string) TestResult {
 
 	// This is difficult to test reliably without simulating network failures
 	// For now, verify that we can connect (will is set at connect time)
-	client, err := CreateAndConnectClient(broker, "test-will", nil)
+	client, err := CreateAndConnectClient(cfg, "test-will", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -54,14 +58,14 @@ func testWillMessage(broker string) TestResult {
 // testWillDelayInterval tests Will Delay Interval [MQTT-3.1.3-9]
 // "The Server delays publishing the Client's Will Message until the Will Delay
 // Interval has passed or the Session ends"
-func testWillDelayInterval(broker string) TestResult {
+func testWillDelayInterval(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Will Delay Interval",
 		SpecRef: "MQTT-3.1.3-9",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-will-delay", nil)
+	client, err := CreateAndConnectClient(cfg, "test-will-delay", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -77,14 +81,14 @@ func testWillDelayInterval(broker string) TestResult {
 // testWillQoS tests Will Message QoS levels [MQTT-3.1.2-12]
 // "If the Will Flag is set to 1, the value of Will QoS can be 0 (0x00),
 // 1 (0x01), or 2 (0x02)"
-func testWillQoS(broker string) TestResult {
+func testWillQoS(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Will Message QoS",
 		SpecRef: "MQTT-3.1.2-12",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-will-qos", nil)
+	client, err := CreateAndConnectClient(cfg, "test-will-qos", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -100,14 +104,14 @@ func testWillQoS(broker string) TestResult {
 // testWillRetain tests Will Message retain flag [MQTT-3.1.2-15]
 // "If the Will Flag is set to 1 and Will Retain is set to 1, the Server MUST
 // publish the Will Message as a retained message"
-func testWillRetain(broker string) TestResult {
+func testWillRetain(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Will Message Retain",
 		SpecRef: "MQTT-3.1.2-15",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-will-retain", nil)
+	client, err := CreateAndConnectClient(cfg, "test-will-retain", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

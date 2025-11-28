@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"net"
@@ -29,14 +33,14 @@ func AdditionalNegativeTests() TestGroup {
 }
 
 // testMaximumTopicLength tests handling of very long topic names
-func testMaximumTopicLength(broker string) TestResult {
+func testMaximumTopicLength(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Maximum Topic Name Length",
 		SpecRef: "MQTT-4.7.3-3",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-max-topic-len", nil)
+	client, err := CreateAndConnectClient(cfg, "test-max-topic-len", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -62,7 +66,7 @@ func testMaximumTopicLength(broker string) TestResult {
 }
 
 // testExcessiveClientID tests handling of very long client IDs
-func testExcessiveClientID(broker string) TestResult {
+func testExcessiveClientID(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Excessive Client ID Length",
@@ -72,7 +76,7 @@ func testExcessiveClientID(broker string) TestResult {
 	// Try to connect with very long client ID
 	longClientID := "test-" + strings.Repeat("x", 200)
 
-	client, err := CreateAndConnectClient(broker, longClientID, nil)
+	client, err := CreateAndConnectClient(cfg, longClientID, nil)
 	if err != nil {
 		// Broker may reject very long client IDs
 		result.Passed = true
@@ -89,14 +93,14 @@ func testExcessiveClientID(broker string) TestResult {
 }
 
 // testMalformedUTF8InPayload tests handling of malformed UTF-8 in payload
-func testMalformedUTF8InPayload(broker string) TestResult {
+func testMalformedUTF8InPayload(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Malformed UTF-8 in Payload",
 		SpecRef: "MQTT-1.5.4-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-malformed-utf8", nil)
+	client, err := CreateAndConnectClient(cfg, "test-malformed-utf8", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -127,7 +131,7 @@ func testMalformedUTF8InPayload(broker string) TestResult {
 }
 
 // testZeroLengthClientID tests zero-length client ID with Clean Start
-func testZeroLengthClientID(broker string) TestResult {
+func testZeroLengthClientID(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Zero-Length Client ID with Clean Start",
@@ -135,7 +139,7 @@ func testZeroLengthClientID(broker string) TestResult {
 	}
 
 	// Empty client ID with Clean Start should be accepted (broker assigns ID)
-	client, err := CreateAndConnectClient(broker, "", nil)
+	client, err := CreateAndConnectClient(cfg, "", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect with empty client ID failed: %w", err)
 		result.Duration = time.Since(start)
@@ -149,14 +153,14 @@ func testZeroLengthClientID(broker string) TestResult {
 }
 
 // testReservedTopicCharacters tests topics with reserved characters
-func testReservedTopicCharacters(broker string) TestResult {
+func testReservedTopicCharacters(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reserved Topic Characters",
 		SpecRef: "MQTT-4.7.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-reserved-chars", nil)
+	client, err := CreateAndConnectClient(cfg, "test-reserved-chars", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -198,14 +202,14 @@ func testReservedTopicCharacters(broker string) TestResult {
 }
 
 // testSubscribeWithoutTopics tests SUBSCRIBE packet with no topic filters
-func testSubscribeWithoutTopics(broker string) TestResult {
+func testSubscribeWithoutTopics(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "SUBSCRIBE Without Topic Filters",
 		SpecRef: "MQTT-3.8.3-3",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -289,14 +293,14 @@ func testSubscribeWithoutTopics(broker string) TestResult {
 }
 
 // testUnsubscribeWithoutTopics tests UNSUBSCRIBE packet with no topics
-func testUnsubscribeWithoutTopics(broker string) TestResult {
+func testUnsubscribeWithoutTopics(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UNSUBSCRIBE Without Topics",
 		SpecRef: "MQTT-3.10.3-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-unsub-no-topics", nil)
+	client, err := CreateAndConnectClient(cfg, "test-unsub-no-topics", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -318,14 +322,14 @@ func testUnsubscribeWithoutTopics(broker string) TestResult {
 }
 
 // testPublishWithExcessiveQoS tests handling of invalid QoS values in edge cases
-func testPublishWithExcessiveQoS(broker string) TestResult {
+func testPublishWithExcessiveQoS(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Publish with Excessive QoS",
 		SpecRef: "MQTT-3.3.1-4",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-excessive-qos", nil)
+	client, err := CreateAndConnectClient(cfg, "test-excessive-qos", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -25,7 +29,7 @@ func UnsubscribeTests() TestGroup {
 
 // testUnsubscribeStopsMessages tests that unsubscribe stops message delivery [MQTT-3.10.4-6]
 // "The Server MUST stop adding any new messages for delivery to the Client"
-func testUnsubscribeStopsMessages(broker string) TestResult {
+func testUnsubscribeStopsMessages(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UNSUBSCRIBE Stops Message Delivery",
@@ -42,7 +46,7 @@ func testUnsubscribeStopsMessages(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-unsub-stops", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-unsub-stops", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -67,7 +71,7 @@ func testUnsubscribeStopsMessages(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Create publisher
-	pub, err := CreateAndConnectClient(broker, "test-unsub-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-unsub-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -142,14 +146,14 @@ func testUnsubscribeStopsMessages(broker string) TestResult {
 
 // testUnsubscribeMultipleTopics tests unsubscribing from multiple topics [MQTT-3.10.3-2]
 // "The Topic Filters in an UNSUBSCRIBE packet MUST be UTF-8 Encoded Strings"
-func testUnsubscribeMultipleTopics(broker string) TestResult {
+func testUnsubscribeMultipleTopics(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UNSUBSCRIBE Multiple Topics",
 		SpecRef: "MQTT-3.10.3-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-unsub-multiple", nil)
+	client, err := CreateAndConnectClient(cfg, "test-unsub-multiple", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -196,14 +200,14 @@ func testUnsubscribeMultipleTopics(broker string) TestResult {
 
 // testUnsubackReasonCodes tests UNSUBACK reason codes [MQTT-3.11.2-1]
 // "The Server sends an UNSUBACK packet to the Client to confirm receipt of an UNSUBSCRIBE packet"
-func testUnsubackReasonCodes(broker string) TestResult {
+func testUnsubackReasonCodes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UNSUBACK Reason Codes",
 		SpecRef: "MQTT-3.11.2-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-unsuback-codes", nil)
+	client, err := CreateAndConnectClient(cfg, "test-unsuback-codes", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -252,14 +256,14 @@ func testUnsubackReasonCodes(broker string) TestResult {
 // "If the Server receives an UNSUBSCRIBE packet that contains a Topic Filter that does
 // not match any of the Client's existing Subscriptions, the Server MUST respond with
 // an UNSUBACK containing a Reason Code of 0x11 (No subscription existed)"
-func testUnsubscribeNonExistent(broker string) TestResult {
+func testUnsubscribeNonExistent(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UNSUBSCRIBE Non-Existent Subscription",
 		SpecRef: "MQTT-3.11.3-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-unsub-nonexist", nil)
+	client, err := CreateAndConnectClient(cfg, "test-unsub-nonexist", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -297,14 +301,14 @@ func testUnsubscribeNonExistent(broker string) TestResult {
 // testUnsubscribePacketIdentifier tests packet identifier in UNSUBSCRIBE [MQTT-3.10.2-1]
 // "The Packet Identifier field is used to identify the UNSUBSCRIBE
 // packet and its associated UNSUBACK"
-func testUnsubscribePacketIdentifier(broker string) TestResult {
+func testUnsubscribePacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UNSUBSCRIBE Packet Identifier Matching",
 		SpecRef: "MQTT-3.10.2-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-unsub-packetid", nil)
+	client, err := CreateAndConnectClient(cfg, "test-unsub-packetid", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

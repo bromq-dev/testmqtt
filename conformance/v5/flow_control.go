@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -26,7 +30,7 @@ func FlowControlTests() TestGroup {
 // testReceiveMaximumBasic tests Receive Maximum property [MQTT-3.1.2.11.3]
 // "The Client uses this value to limit the number of QoS 1 and QoS 2 publications
 // that it is willing to process concurrently"
-func testReceiveMaximumBasic(broker string) TestResult {
+func testReceiveMaximumBasic(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Receive Maximum Property",
@@ -34,7 +38,7 @@ func testReceiveMaximumBasic(broker string) TestResult {
 	}
 
 	// Connect - broker will send its Receive Maximum in CONNACK
-	client, err := CreateAndConnectClient(broker, "test-recvmax-basic", nil)
+	client, err := CreateAndConnectClient(cfg, "test-recvmax-basic", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -51,7 +55,7 @@ func testReceiveMaximumBasic(broker string) TestResult {
 // testReceiveMaximumQoS1 tests that Receive Maximum applies to QoS 1 [MQTT-4.9.0-1]
 // "The Client MUST NOT send more than Receive Maximum QoS 1 and QoS 2 PUBLISH packets
 // for which it has not received PUBACK, PUBCOMP, or PUBREC with a Reason Code >= 0x80"
-func testReceiveMaximumQoS1(broker string) TestResult {
+func testReceiveMaximumQoS1(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Receive Maximum Applies to QoS 1",
@@ -68,7 +72,7 @@ func testReceiveMaximumQoS1(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-recvmax-qos1-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-recvmax-qos1-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -88,7 +92,7 @@ func testReceiveMaximumQoS1(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-recvmax-qos1-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-recvmax-qos1-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -129,7 +133,7 @@ func testReceiveMaximumQoS1(broker string) TestResult {
 }
 
 // testReceiveMaximumQoS2 tests that Receive Maximum applies to QoS 2 [MQTT-4.9.0-2]
-func testReceiveMaximumQoS2(broker string) TestResult {
+func testReceiveMaximumQoS2(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Receive Maximum Applies to QoS 2",
@@ -146,7 +150,7 @@ func testReceiveMaximumQoS2(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-recvmax-qos2-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-recvmax-qos2-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -166,7 +170,7 @@ func testReceiveMaximumQoS2(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-recvmax-qos2-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-recvmax-qos2-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -209,7 +213,7 @@ func testReceiveMaximumQoS2(broker string) TestResult {
 // testReceiveMaximumEnforcement tests that exceeding Receive Maximum causes disconnect [MQTT-4.9.0-3]
 // "If a Server or Client receives more than Receive Maximum QoS 1 and QoS 2 PUBLISH packets
 // without sending PUBACK or PUBCOMP, it MUST close the Network Connection"
-func testReceiveMaximumEnforcement(broker string) TestResult {
+func testReceiveMaximumEnforcement(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Receive Maximum Enforcement",
@@ -232,7 +236,7 @@ func testReceiveMaximumEnforcement(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-recvmax-enforce-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-recvmax-enforce-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -252,7 +256,7 @@ func testReceiveMaximumEnforcement(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-recvmax-enforce-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-recvmax-enforce-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -296,7 +300,7 @@ func testReceiveMaximumEnforcement(broker string) TestResult {
 // testPacketIdentifierReuse tests packet identifier reuse [MQTT-2.2.1-3]
 // "Packet Identifiers become available for reuse after the sender has processed
 // the corresponding acknowledgement packet"
-func testPacketIdentifierReuse(broker string) TestResult {
+func testPacketIdentifierReuse(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Packet Identifier Reuse After ACK",
@@ -313,7 +317,7 @@ func testPacketIdentifierReuse(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-packetid-reuse-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-packetid-reuse-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -333,7 +337,7 @@ func testPacketIdentifierReuse(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-packetid-reuse-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-packetid-reuse-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

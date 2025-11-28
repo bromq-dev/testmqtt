@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -26,7 +30,7 @@ func PropertiesTests() TestGroup {
 // testUserProperties tests User Properties [MQTT-3.1.3-10]
 // "The Server MUST maintain the order of User Properties when publishing
 // the Will Message"
-func testUserProperties(broker string) TestResult {
+func testUserProperties(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "User Properties",
@@ -47,7 +51,7 @@ func testUserProperties(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-userprops", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-userprops", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -67,7 +71,7 @@ func testUserProperties(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-userprops", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-userprops", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -110,7 +114,7 @@ func testUserProperties(broker string) TestResult {
 }
 
 // testContentType tests Content Type property
-func testContentType(broker string) TestResult {
+func testContentType(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Content Type Property",
@@ -131,7 +135,7 @@ func testContentType(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-contenttype", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-contenttype", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -151,7 +155,7 @@ func testContentType(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-contenttype", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-contenttype", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -190,7 +194,7 @@ func testContentType(broker string) TestResult {
 }
 
 // testResponseTopic tests Response Topic property
-func testResponseTopic(broker string) TestResult {
+func testResponseTopic(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Response Topic Property",
@@ -211,7 +215,7 @@ func testResponseTopic(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-responsetopic", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-responsetopic", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -231,7 +235,7 @@ func testResponseTopic(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-responsetopic", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-responsetopic", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -270,7 +274,7 @@ func testResponseTopic(broker string) TestResult {
 }
 
 // testCorrelationData tests Correlation Data property
-func testCorrelationData(broker string) TestResult {
+func testCorrelationData(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Correlation Data Property",
@@ -291,7 +295,7 @@ func testCorrelationData(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-correlation", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-correlation", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -311,7 +315,7 @@ func testCorrelationData(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-correlation", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-correlation", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -351,7 +355,7 @@ func testCorrelationData(broker string) TestResult {
 
 // testMaximumPacketSize tests Maximum Packet Size [MQTT-3.1.2-24]
 // "The Server MUST NOT send packets exceeding Maximum Packet Size to the Client"
-func testMaximumPacketSize(broker string) TestResult {
+func testMaximumPacketSize(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Maximum Packet Size",
@@ -360,7 +364,7 @@ func testMaximumPacketSize(broker string) TestResult {
 
 	// Testing maximum packet size requires setting it in CONNECT
 	// and then trying to send large messages
-	client, err := CreateAndConnectClient(broker, "test-maxpacket", nil)
+	client, err := CreateAndConnectClient(cfg, "test-maxpacket", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

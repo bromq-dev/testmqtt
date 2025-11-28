@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"net"
@@ -31,14 +35,14 @@ func NegativeTests() TestGroup {
 
 // testInvalidTopicWithWildcard tests that wildcards in PUBLISH topics are rejected [MQTT-4.7.3-1]
 // "The Topic Name in the PUBLISH packet MUST NOT contain wildcard characters"
-func testInvalidTopicWithWildcard(broker string) TestResult {
+func testInvalidTopicWithWildcard(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Wildcards in PUBLISH Topic",
 		SpecRef: "MQTT-4.7.3-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-wildcard-publish", nil)
+	client, err := CreateAndConnectClient(cfg, "test-wildcard-publish", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -79,7 +83,7 @@ func testInvalidTopicWithWildcard(broker string) TestResult {
 
 // testInvalidQoSValue tests that invalid QoS values are rejected [MQTT-3.1.2-12]
 // "A value of 3 (0x03) is a Malformed Packet"
-func testInvalidQoSValue(broker string) TestResult {
+func testInvalidQoSValue(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Invalid QoS Value (3)",
@@ -90,7 +94,7 @@ func testInvalidQoSValue(broker string) TestResult {
 	// The paho client library validates QoS, so this would need low-level packet crafting
 	// For now, verify the client library prevents it
 
-	client, err := CreateAndConnectClient(broker, "test-invalid-qos", nil)
+	client, err := CreateAndConnectClient(cfg, "test-invalid-qos", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -107,14 +111,14 @@ func testInvalidQoSValue(broker string) TestResult {
 
 // testTopicWithNullCharacter tests that null characters in topics are rejected [MQTT-1.5.4-2]
 // "A UTF-8 Encoded String MUST NOT include an encoding of the null character U+0000"
-func testTopicWithNullCharacter(broker string) TestResult {
+func testTopicWithNullCharacter(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Null Character in Topic",
 		SpecRef: "MQTT-1.5.4-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-null-topic", nil)
+	client, err := CreateAndConnectClient(cfg, "test-null-topic", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -147,14 +151,14 @@ func testTopicWithNullCharacter(broker string) TestResult {
 
 // testEmptyTopicName tests that empty topic names are rejected
 // "All Topic Names and Topic Filters MUST be at least one character long"
-func testEmptyTopicName(broker string) TestResult {
+func testEmptyTopicName(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Empty Topic Name",
 		SpecRef: "MQTT-4.7.3-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-empty-topic", nil)
+	client, err := CreateAndConnectClient(cfg, "test-empty-topic", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -186,7 +190,7 @@ func testEmptyTopicName(broker string) TestResult {
 
 // testInvalidProtocolName tests wrong protocol name handling [MQTT-3.1.2-1]
 // "The protocol name MUST be the UTF-8 String 'MQTT'"
-func testInvalidProtocolName(broker string) TestResult {
+func testInvalidProtocolName(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Invalid Protocol Name",
@@ -197,7 +201,7 @@ func testInvalidProtocolName(broker string) TestResult {
 	// The paho library always sends "MQTT", so we'd need to test at packet level
 
 	// For now, test that we can't easily bypass this with the library
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -280,14 +284,14 @@ func testInvalidProtocolName(broker string) TestResult {
 // testPublishBeforeConnect tests that packets before CONNECT are rejected [MQTT-3.1.0-1]
 // "After a Network Connection is established by a Client to a Server,
 // the first packet sent from the Client to the Server MUST be a CONNECT packet"
-func testPublishBeforeConnect(broker string) TestResult {
+func testPublishBeforeConnect(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Packets Before CONNECT",
 		SpecRef: "MQTT-3.1.0-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -347,14 +351,14 @@ func testPublishBeforeConnect(broker string) TestResult {
 }
 
 // testOversizedPayload tests maximum payload size handling
-func testOversizedPayload(broker string) TestResult {
+func testOversizedPayload(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Handle Oversized Payload",
 		SpecRef: "MQTT-3.1.2-24",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-oversized", nil)
+	client, err := CreateAndConnectClient(cfg, "test-oversized", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -381,7 +385,7 @@ func testOversizedPayload(broker string) TestResult {
 }
 
 // testInvalidClientID tests client ID validation
-func testInvalidClientID(broker string) TestResult {
+func testInvalidClientID(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Validate Client ID Constraints",
@@ -394,7 +398,7 @@ func testInvalidClientID(broker string) TestResult {
 
 	_ = "test\x00client" // Example invalid client ID with null
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)

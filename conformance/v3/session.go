@@ -25,7 +25,7 @@ func SessionTests() common.TestGroup {
 }
 
 // testSessionStatePersistence tests session state persists across connections [MQTT-3.1.2-4]
-func testSessionStatePersistence(broker string) common.TestResult {
+func testSessionStatePersistence(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Session State Persistence",
@@ -35,7 +35,7 @@ func testSessionStatePersistence(broker string) common.TestResult {
 	clientID := common.GenerateClientID("test-session-persist")
 
 	// First connection with Clean Session = false
-	client1, err := CreateAndConnectClientWithSession(broker, clientID, false, nil)
+	client1, err := CreateAndConnectClientWithSession(cfg, clientID, false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -60,7 +60,7 @@ func testSessionStatePersistence(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	client2, err := CreateAndConnectClientWithSession(broker, clientID, false, messageHandler)
+	client2, err := CreateAndConnectClientWithSession(cfg, clientID, false, messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -71,7 +71,7 @@ func testSessionStatePersistence(broker string) common.TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Publish to the topic (subscription should still exist)
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-session-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-session-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -95,7 +95,7 @@ func testSessionStatePersistence(broker string) common.TestResult {
 }
 
 // testSubscriptionPersistence tests subscriptions persist [MQTT-3.1.2-4]
-func testSubscriptionPersistence(broker string) common.TestResult {
+func testSubscriptionPersistence(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Subscription Persistence",
@@ -106,7 +106,7 @@ func testSubscriptionPersistence(broker string) common.TestResult {
 	topic := "test/session/subscription"
 
 	// Connect and subscribe with Clean Session = false
-	client1, err := CreateAndConnectClientWithSession(broker, clientID, false, nil)
+	client1, err := CreateAndConnectClientWithSession(cfg, clientID, false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -118,7 +118,7 @@ func testSubscriptionPersistence(broker string) common.TestResult {
 	time.Sleep(200 * time.Millisecond)
 
 	// Publish while client is offline
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-sub-persist-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-sub-persist-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -138,7 +138,7 @@ func testSubscriptionPersistence(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	client2, err := CreateAndConnectClientWithSession(broker, clientID, false, messageHandler)
+	client2, err := CreateAndConnectClientWithSession(cfg, clientID, false, messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -161,7 +161,7 @@ func testSubscriptionPersistence(broker string) common.TestResult {
 }
 
 // testQoS1MessagePersistence tests QoS 1 messages persist [MQTT-3.1.2-5]
-func testQoS1MessagePersistence(broker string) common.TestResult {
+func testQoS1MessagePersistence(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS 1 Message Persistence",
@@ -172,7 +172,7 @@ func testQoS1MessagePersistence(broker string) common.TestResult {
 	topic := "test/session/qos1"
 
 	// Connect and subscribe with Clean Session = false
-	client1, err := CreateAndConnectClientWithSession(broker, clientID, false, nil)
+	client1, err := CreateAndConnectClientWithSession(cfg, clientID, false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -184,7 +184,7 @@ func testQoS1MessagePersistence(broker string) common.TestResult {
 	time.Sleep(200 * time.Millisecond)
 
 	// Publish QoS 1 while offline
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos1-persist-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos1-persist-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -204,7 +204,7 @@ func testQoS1MessagePersistence(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	client2, err := CreateAndConnectClientWithSession(broker, clientID, false, messageHandler)
+	client2, err := CreateAndConnectClientWithSession(cfg, clientID, false, messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -227,7 +227,7 @@ func testQoS1MessagePersistence(broker string) common.TestResult {
 }
 
 // testQoS2MessagePersistence tests QoS 2 messages persist [MQTT-3.1.2-5]
-func testQoS2MessagePersistence(broker string) common.TestResult {
+func testQoS2MessagePersistence(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS 2 Message Persistence",
@@ -238,7 +238,7 @@ func testQoS2MessagePersistence(broker string) common.TestResult {
 	topic := "test/session/qos2"
 
 	// Connect and subscribe with Clean Session = false
-	client1, err := CreateAndConnectClientWithSession(broker, clientID, false, nil)
+	client1, err := CreateAndConnectClientWithSession(cfg, clientID, false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -250,7 +250,7 @@ func testQoS2MessagePersistence(broker string) common.TestResult {
 	time.Sleep(200 * time.Millisecond)
 
 	// Publish QoS 2 while offline
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos2-persist-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos2-persist-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -270,7 +270,7 @@ func testQoS2MessagePersistence(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	client2, err := CreateAndConnectClientWithSession(broker, clientID, false, messageHandler)
+	client2, err := CreateAndConnectClientWithSession(cfg, clientID, false, messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -293,7 +293,7 @@ func testQoS2MessagePersistence(broker string) common.TestResult {
 }
 
 // testCleanSessionClearsState tests Clean Session = true clears state [MQTT-3.1.2-6]
-func testCleanSessionClearsState(broker string) common.TestResult {
+func testCleanSessionClearsState(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Clean Session Clears State",
@@ -304,7 +304,7 @@ func testCleanSessionClearsState(broker string) common.TestResult {
 	topic := "test/session/clean"
 
 	// Connect with Clean Session = false and subscribe
-	client1, err := CreateAndConnectClientWithSession(broker, clientID, false, nil)
+	client1, err := CreateAndConnectClientWithSession(cfg, clientID, false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -316,7 +316,7 @@ func testCleanSessionClearsState(broker string) common.TestResult {
 	time.Sleep(200 * time.Millisecond)
 
 	// Reconnect with Clean Session = true (should clear state)
-	client2, err := CreateAndConnectClientWithSession(broker, clientID, true, nil)
+	client2, err := CreateAndConnectClientWithSession(cfg, clientID, true, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -326,7 +326,7 @@ func testCleanSessionClearsState(broker string) common.TestResult {
 	time.Sleep(200 * time.Millisecond)
 
 	// Publish message
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-clean-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-clean-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -346,7 +346,7 @@ func testCleanSessionClearsState(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	client3, err := CreateAndConnectClientWithSession(broker, clientID, false, messageHandler)
+	client3, err := CreateAndConnectClientWithSession(cfg, clientID, false, messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("third connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -369,7 +369,7 @@ func testCleanSessionClearsState(broker string) common.TestResult {
 }
 
 // testRetainedNotPartOfSession tests retained messages are not part of session state [MQTT-3.1.2.7]
-func testRetainedNotPartOfSession(broker string) common.TestResult {
+func testRetainedNotPartOfSession(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Retained Messages Not Part of Session",
@@ -379,7 +379,7 @@ func testRetainedNotPartOfSession(broker string) common.TestResult {
 	topic := "test/session/retained"
 
 	// Publish retained message
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-retained-session-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-retained-session-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -400,7 +400,7 @@ func testRetainedNotPartOfSession(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	client, err := CreateAndConnectClientWithSession(broker, clientID, true, messageHandler)
+	client, err := CreateAndConnectClientWithSession(cfg, clientID, true, messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("client connect failed: %w", err)
 		result.Duration = time.Since(start)

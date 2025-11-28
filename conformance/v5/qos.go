@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -27,7 +31,7 @@ func QoSTests() TestGroup {
 // testQoS0 tests QoS 0 message delivery [MQTT-4.3.1-1]
 // "The receiver does not respond to the message and does not make any attempt
 // at re-delivery"
-func testQoS0(broker string) TestResult {
+func testQoS0(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "QoS 0 Delivery",
@@ -46,7 +50,7 @@ func testQoS0(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-qos0", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-qos0", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -66,7 +70,7 @@ func testQoS0(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-qos0", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-qos0", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -103,7 +107,7 @@ func testQoS0(broker string) TestResult {
 
 // testQoS1 tests QoS 1 message delivery [MQTT-4.3.2-1]
 // "The receiver sends a PUBACK packet in response to a PUBLISH packet"
-func testQoS1(broker string) TestResult {
+func testQoS1(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "QoS 1 Delivery",
@@ -122,7 +126,7 @@ func testQoS1(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-qos1", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-qos1", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -142,7 +146,7 @@ func testQoS1(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-qos1", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-qos1", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -180,7 +184,7 @@ func testQoS1(broker string) TestResult {
 // testQoS2 tests QoS 2 message delivery [MQTT-4.3.3-1]
 // "This is the highest QoS level, for use when neither loss nor duplication
 // of messages are acceptable"
-func testQoS2(broker string) TestResult {
+func testQoS2(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "QoS 2 Delivery",
@@ -199,7 +203,7 @@ func testQoS2(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-qos2", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-qos2", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -219,7 +223,7 @@ func testQoS2(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-qos2", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-qos2", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -256,7 +260,7 @@ func testQoS2(broker string) TestResult {
 
 // testQoS1Duplicate tests QoS 1 duplicate handling
 // Tests that messages can be delivered with QoS 1
-func testQoS1Duplicate(broker string) TestResult {
+func testQoS1Duplicate(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "QoS 1 At Least Once",
@@ -273,7 +277,7 @@ func testQoS1Duplicate(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-qos1-dup", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-qos1-dup", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -293,7 +297,7 @@ func testQoS1Duplicate(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-qos1-dup", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-qos1-dup", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -332,7 +336,7 @@ func testQoS1Duplicate(broker string) TestResult {
 
 // testQoS2ExactlyOnce tests QoS 2 exactly-once delivery
 // Verifies that QoS 2 messages are delivered exactly once
-func testQoS2ExactlyOnce(broker string) TestResult {
+func testQoS2ExactlyOnce(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "QoS 2 Exactly-Once",
@@ -349,7 +353,7 @@ func testQoS2ExactlyOnce(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-qos2-once", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-qos2-once", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -369,7 +373,7 @@ func testQoS2ExactlyOnce(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-qos2-once", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-qos2-once", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -410,7 +414,7 @@ func testQoS2ExactlyOnce(broker string) TestResult {
 // "Each time a Client sends a new SUBSCRIBE, UNSUBSCRIBE, or PUBLISH (where QoS > 0)
 // MQTT Control Packet it MUST assign it a non-zero Packet Identifier that is
 // currently unused"
-func testPacketIdentifier(broker string) TestResult {
+func testPacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Packet Identifier Assignment",
@@ -419,7 +423,7 @@ func testPacketIdentifier(broker string) TestResult {
 
 	// The paho client library handles packet identifiers automatically
 	// We test that multiple QoS > 0 publishes work correctly
-	pub, err := CreateAndConnectClient(broker, "test-pub-pktid", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-pktid", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

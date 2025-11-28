@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"fmt"
 	"net"
 	"net/url"
@@ -25,14 +29,14 @@ func DisconnectTests() TestGroup {
 // testNormalDisconnect tests normal disconnection [MQTT-3.14.4-1]
 // "After sending a DISCONNECT packet the Client MUST NOT send any more MQTT
 // Control Packets on that Network Connection"
-func testNormalDisconnect(broker string) TestResult {
+func testNormalDisconnect(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Normal Disconnect (Reason Code 0x00)",
 		SpecRef: "MQTT-3.14.4-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-disconnect-normal", nil)
+	client, err := CreateAndConnectClient(cfg, "test-disconnect-normal", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -56,7 +60,7 @@ func testNormalDisconnect(broker string) TestResult {
 }
 
 // testDisconnectReasonCodes tests various DISCONNECT reason codes [MQTT-3.14.2.1]
-func testDisconnectReasonCodes(broker string) TestResult {
+func testDisconnectReasonCodes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "DISCONNECT Reason Codes",
@@ -64,7 +68,7 @@ func testDisconnectReasonCodes(broker string) TestResult {
 	}
 
 	// Test normal disconnection with reason code
-	client, err := CreateAndConnectClient(broker, "test-disconnect-codes-1", nil)
+	client, err := CreateAndConnectClient(cfg, "test-disconnect-codes-1", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -83,7 +87,7 @@ func testDisconnectReasonCodes(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Test disconnect with will message
-	client2, err := CreateAndConnectClient(broker, "test-disconnect-codes-2", nil)
+	client2, err := CreateAndConnectClient(cfg, "test-disconnect-codes-2", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -107,14 +111,14 @@ func testDisconnectReasonCodes(broker string) TestResult {
 // testDisconnectSessionExpiry tests session expiry in DISCONNECT [MQTT-3.14.2.2.2]
 // "If the Session Expiry Interval in the DISCONNECT packet is absent, the Session
 // Expiry Interval in the CONNECT packet is used"
-func testDisconnectSessionExpiry(broker string) TestResult {
+func testDisconnectSessionExpiry(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "DISCONNECT Session Expiry Interval",
 		SpecRef: "MQTT-3.14.2.2.2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-disconnect-session", nil)
+	client, err := CreateAndConnectClient(cfg, "test-disconnect-session", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -147,14 +151,14 @@ func testDisconnectSessionExpiry(broker string) TestResult {
 
 // testServerDisconnect tests server-initiated disconnect [MQTT-3.14.4-3]
 // "After sending a DISCONNECT packet the Server MUST close the Network Connection"
-func testServerDisconnect(broker string) TestResult {
+func testServerDisconnect(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Server-Initiated Disconnect Closes Connection",
 		SpecRef: "MQTT-3.14.4-3",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)

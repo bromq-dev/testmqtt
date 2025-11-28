@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"net"
@@ -27,14 +31,14 @@ func RemainingLengthTests() TestGroup {
 // testRemainingLengthOneByte tests 1-byte remaining length (0-127) [MQTT-2.1.4-1]
 // "Remaining Length is encoded using a variable length encoding scheme which uses
 // a single byte for values up to 127"
-func testRemainingLengthOneByte(broker string) TestResult {
+func testRemainingLengthOneByte(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Remaining Length: 1 Byte (0-127)",
 		SpecRef: "MQTT-2.1.4-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-remlen-1byte", nil)
+	client, err := CreateAndConnectClient(cfg, "test-remlen-1byte", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -66,14 +70,14 @@ func testRemainingLengthOneByte(broker string) TestResult {
 }
 
 // testRemainingLengthTwoBytes tests 2-byte remaining length (128-16,383) [MQTT-2.1.4-2]
-func testRemainingLengthTwoBytes(broker string) TestResult {
+func testRemainingLengthTwoBytes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Remaining Length: 2 Bytes (128-16,383)",
 		SpecRef: "MQTT-2.1.4-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-remlen-2byte", nil)
+	client, err := CreateAndConnectClient(cfg, "test-remlen-2byte", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -107,14 +111,14 @@ func testRemainingLengthTwoBytes(broker string) TestResult {
 }
 
 // testRemainingLengthThreeBytes tests 3-byte remaining length (16,384-2,097,151) [MQTT-2.1.4-3]
-func testRemainingLengthThreeBytes(broker string) TestResult {
+func testRemainingLengthThreeBytes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Remaining Length: 3 Bytes (16,384-2,097,151)",
 		SpecRef: "MQTT-2.1.4-3",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-remlen-3byte", nil)
+	client, err := CreateAndConnectClient(cfg, "test-remlen-3byte", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -148,14 +152,14 @@ func testRemainingLengthThreeBytes(broker string) TestResult {
 }
 
 // testRemainingLengthFourBytes tests 4-byte remaining length (2,097,152-268,435,455) [MQTT-2.1.4-4]
-func testRemainingLengthFourBytes(broker string) TestResult {
+func testRemainingLengthFourBytes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Remaining Length: 4 Bytes (2,097,152-268,435,455)",
 		SpecRef: "MQTT-2.1.4-4",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-remlen-4byte", nil)
+	client, err := CreateAndConnectClient(cfg, "test-remlen-4byte", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -192,7 +196,7 @@ func testRemainingLengthFourBytes(broker string) TestResult {
 
 // testRemainingLengthMaximum tests maximum remaining length value [MQTT-2.1.4-5]
 // "The maximum number of bytes in the Remaining Length field is four"
-func testRemainingLengthMaximum(broker string) TestResult {
+func testRemainingLengthMaximum(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Remaining Length: Maximum Value (268,435,455)",
@@ -200,7 +204,7 @@ func testRemainingLengthMaximum(broker string) TestResult {
 	}
 
 	// Connect and try to send a packet that would exceed max remaining length
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)

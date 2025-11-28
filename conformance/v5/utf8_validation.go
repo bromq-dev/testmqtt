@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"net"
@@ -27,7 +31,7 @@ func UTF8ValidationTests() TestGroup {
 
 // testUTF8WellFormed tests that UTF-8 strings must be well-formed [MQTT-1.5.4-1]
 // "The character data in a UTF-8 Encoded String MUST be well-formed UTF-8"
-func testUTF8WellFormed(broker string) TestResult {
+func testUTF8WellFormed(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UTF-8 Strings Must Be Well-Formed",
@@ -35,7 +39,7 @@ func testUTF8WellFormed(broker string) TestResult {
 	}
 
 	// Test with valid UTF-8 characters including multi-byte sequences
-	client, err := CreateAndConnectClient(broker, "test-utf8-valid-\u4E2D\u6587", nil)
+	client, err := CreateAndConnectClient(cfg, "test-utf8-valid-\u4E2D\u6587", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect with valid UTF-8 failed: %w", err)
 		result.Duration = time.Since(start)
@@ -65,14 +69,14 @@ func testUTF8WellFormed(broker string) TestResult {
 
 // testUTF8NoNull tests that null character is not allowed [MQTT-1.5.4-2]
 // "A UTF-8 Encoded String MUST NOT include an encoding of the null character U+0000"
-func testUTF8NoNull(broker string) TestResult {
+func testUTF8NoNull(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UTF-8 Strings Must Not Contain Null (U+0000)",
 		SpecRef: "MQTT-1.5.4-2",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -143,14 +147,14 @@ func testUTF8NoNull(broker string) TestResult {
 
 // testUTF8NoSurrogates tests that UTF-16 surrogates are not allowed [MQTT-1.5.4-3]
 // "A UTF-8 Encoded String MUST NOT include encodings of code points between U+D800 and U+DFFF"
-func testUTF8NoSurrogates(broker string) TestResult {
+func testUTF8NoSurrogates(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UTF-8 Must Not Contain Surrogates (U+D800 to U+DFFF)",
 		SpecRef: "MQTT-1.5.4-3",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -219,7 +223,7 @@ func testUTF8NoSurrogates(broker string) TestResult {
 }
 
 // testUTF8ValidClientID tests that client IDs must be valid UTF-8 [MQTT-3.1.3-4]
-func testUTF8ValidClientID(broker string) TestResult {
+func testUTF8ValidClientID(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Client ID Must Be Valid UTF-8",
@@ -236,7 +240,7 @@ func testUTF8ValidClientID(broker string) TestResult {
 	}
 
 	for _, clientID := range testIDs {
-		client, err := CreateAndConnectClient(broker, clientID, nil)
+		client, err := CreateAndConnectClient(cfg, clientID, nil)
 		if err != nil {
 			result.Error = fmt.Errorf("failed to connect with valid UTF-8 client ID '%s': %w", clientID, err)
 			result.Duration = time.Since(start)
@@ -252,14 +256,14 @@ func testUTF8ValidClientID(broker string) TestResult {
 }
 
 // testUTF8ValidTopicName tests that topic names must be valid UTF-8 [MQTT-4.7.3-3]
-func testUTF8ValidTopicName(broker string) TestResult {
+func testUTF8ValidTopicName(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Names Must Be Valid UTF-8",
 		SpecRef: "MQTT-4.7.3-3",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-utf8-topics", nil)
+	client, err := CreateAndConnectClient(cfg, "test-utf8-topics", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -297,14 +301,14 @@ func testUTF8ValidTopicName(broker string) TestResult {
 }
 
 // testUTF8InvalidSequence tests that invalid UTF-8 sequences are rejected
-func testUTF8InvalidSequence(broker string) TestResult {
+func testUTF8InvalidSequence(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Invalid UTF-8 Sequences",
 		SpecRef: "MQTT-1.5.4-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)

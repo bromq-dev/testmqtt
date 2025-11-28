@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -25,7 +29,7 @@ func SharedSubscriptionTests() TestGroup {
 
 // testSharedSubscriptionBasic tests basic shared subscription [MQTT-4.8.2-1]
 // "Shared Subscriptions are defined using the $share prefix"
-func testSharedSubscriptionBasic(broker string) TestResult {
+func testSharedSubscriptionBasic(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Shared Subscription Basic",
@@ -43,7 +47,7 @@ func testSharedSubscriptionBasic(broker string) TestResult {
 	}
 
 	// Create two subscribers in the same share group
-	sub1, err := CreateAndConnectClient(broker, "test-share-basic-1", onPublish)
+	sub1, err := CreateAndConnectClient(cfg, "test-share-basic-1", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber 1 connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -51,7 +55,7 @@ func testSharedSubscriptionBasic(broker string) TestResult {
 	}
 	defer sub1.Disconnect(&paho.Disconnect{ReasonCode: 0})
 
-	sub2, err := CreateAndConnectClient(broker, "test-share-basic-2", onPublish)
+	sub2, err := CreateAndConnectClient(cfg, "test-share-basic-2", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber 2 connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -88,7 +92,7 @@ func testSharedSubscriptionBasic(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Publish a message
-	pub, err := CreateAndConnectClient(broker, "test-share-basic-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-share-basic-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -126,7 +130,7 @@ func testSharedSubscriptionBasic(broker string) TestResult {
 
 // testSharedSubscriptionLoadBalancing tests load balancing [MQTT-4.8.2-2]
 // "The Server MUST distribute the messages to the subscribers in the group"
-func testSharedSubscriptionLoadBalancing(broker string) TestResult {
+func testSharedSubscriptionLoadBalancing(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Shared Subscription Load Balancing",
@@ -152,7 +156,7 @@ func testSharedSubscriptionLoadBalancing(broker string) TestResult {
 	}
 
 	// Create two subscribers in the same share group
-	sub1, err := CreateAndConnectClient(broker, "test-share-lb-1", onPublish1)
+	sub1, err := CreateAndConnectClient(cfg, "test-share-lb-1", onPublish1)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber 1 connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -160,7 +164,7 @@ func testSharedSubscriptionLoadBalancing(broker string) TestResult {
 	}
 	defer sub1.Disconnect(&paho.Disconnect{ReasonCode: 0})
 
-	sub2, err := CreateAndConnectClient(broker, "test-share-lb-2", onPublish2)
+	sub2, err := CreateAndConnectClient(cfg, "test-share-lb-2", onPublish2)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber 2 connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -197,7 +201,7 @@ func testSharedSubscriptionLoadBalancing(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Publish multiple messages
-	pub, err := CreateAndConnectClient(broker, "test-share-lb-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-share-lb-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -241,7 +245,7 @@ func testSharedSubscriptionLoadBalancing(broker string) TestResult {
 }
 
 // testSharedSubscriptionQoS tests QoS with shared subscriptions [MQTT-4.8.2]
-func testSharedSubscriptionQoS(broker string) TestResult {
+func testSharedSubscriptionQoS(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Shared Subscription with QoS",
@@ -259,7 +263,7 @@ func testSharedSubscriptionQoS(broker string) TestResult {
 	}
 
 	// Create subscriber with QoS 1
-	sub, err := CreateAndConnectClient(broker, "test-share-qos-1", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-share-qos-1", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -284,7 +288,7 @@ func testSharedSubscriptionQoS(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Publish with QoS 1
-	pub, err := CreateAndConnectClient(broker, "test-share-qos-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-share-qos-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -320,7 +324,7 @@ func testSharedSubscriptionQoS(broker string) TestResult {
 }
 
 // testSharedSubscriptionAndNormalSubscription tests mixing shared and normal subscriptions
-func testSharedSubscriptionAndNormalSubscription(broker string) TestResult {
+func testSharedSubscriptionAndNormalSubscription(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Shared and Normal Subscriptions Coexist",
@@ -346,7 +350,7 @@ func testSharedSubscriptionAndNormalSubscription(broker string) TestResult {
 	}
 
 	// Create shared subscriber
-	subShared, err := CreateAndConnectClient(broker, "test-share-mixed-shared", onPublishShared)
+	subShared, err := CreateAndConnectClient(cfg, "test-share-mixed-shared", onPublishShared)
 	if err != nil {
 		result.Error = fmt.Errorf("shared subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -355,7 +359,7 @@ func testSharedSubscriptionAndNormalSubscription(broker string) TestResult {
 	defer subShared.Disconnect(&paho.Disconnect{ReasonCode: 0})
 
 	// Create normal subscriber
-	subNormal, err := CreateAndConnectClient(broker, "test-share-mixed-normal", onPublishNormal)
+	subNormal, err := CreateAndConnectClient(cfg, "test-share-mixed-normal", onPublishNormal)
 	if err != nil {
 		result.Error = fmt.Errorf("normal subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -393,7 +397,7 @@ func testSharedSubscriptionAndNormalSubscription(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Publish message
-	pub, err := CreateAndConnectClient(broker, "test-share-mixed-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-share-mixed-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -431,7 +435,7 @@ func testSharedSubscriptionAndNormalSubscription(broker string) TestResult {
 }
 
 // testSharedSubscriptionMultipleGroups tests multiple share groups on same topic
-func testSharedSubscriptionMultipleGroups(broker string) TestResult {
+func testSharedSubscriptionMultipleGroups(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Multiple Share Groups on Same Topic",
@@ -457,7 +461,7 @@ func testSharedSubscriptionMultipleGroups(broker string) TestResult {
 	}
 
 	// Create subscribers in different share groups
-	subGroup1, err := CreateAndConnectClient(broker, "test-share-groups-1", onPublishGroup1)
+	subGroup1, err := CreateAndConnectClient(cfg, "test-share-groups-1", onPublishGroup1)
 	if err != nil {
 		result.Error = fmt.Errorf("group1 subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -465,7 +469,7 @@ func testSharedSubscriptionMultipleGroups(broker string) TestResult {
 	}
 	defer subGroup1.Disconnect(&paho.Disconnect{ReasonCode: 0})
 
-	subGroup2, err := CreateAndConnectClient(broker, "test-share-groups-2", onPublishGroup2)
+	subGroup2, err := CreateAndConnectClient(cfg, "test-share-groups-2", onPublishGroup2)
 	if err != nil {
 		result.Error = fmt.Errorf("group2 subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -501,7 +505,7 @@ func testSharedSubscriptionMultipleGroups(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Publish message
-	pub, err := CreateAndConnectClient(broker, "test-share-groups-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-share-groups-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

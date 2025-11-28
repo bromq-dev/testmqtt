@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -25,7 +29,7 @@ func TopicAliasTests() TestGroup {
 
 // testTopicAliasBasic tests basic topic alias functionality [MQTT-3.3.2.3.4-1]
 // "A Topic Alias is an integer value that is used to identify the Topic instead of using the Topic Name"
-func testTopicAliasBasic(broker string) TestResult {
+func testTopicAliasBasic(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Alias Basic Functionality",
@@ -42,7 +46,7 @@ func testTopicAliasBasic(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-alias-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-alias-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -62,7 +66,7 @@ func testTopicAliasBasic(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-alias-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-alias-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -106,7 +110,7 @@ func testTopicAliasBasic(broker string) TestResult {
 
 // testTopicAliasMaximum tests Topic Alias Maximum [MQTT-3.1.2.11.6]
 // "If Topic Alias Maximum is absent or zero, the Client MUST NOT send any Topic Aliases to the Server"
-func testTopicAliasMaximum(broker string) TestResult {
+func testTopicAliasMaximum(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Alias Maximum",
@@ -114,7 +118,7 @@ func testTopicAliasMaximum(broker string) TestResult {
 	}
 
 	// Connect and check if broker provides Topic Alias Maximum in CONNACK
-	client, err := CreateAndConnectClient(broker, "test-alias-max", nil)
+	client, err := CreateAndConnectClient(cfg, "test-alias-max", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -130,14 +134,14 @@ func testTopicAliasMaximum(broker string) TestResult {
 
 // testTopicAliasZeroInvalid tests that Topic Alias of 0 is invalid [MQTT-3.3.2.3.4-2]
 // "A Topic Alias value of 0 is not permitted"
-func testTopicAliasZeroInvalid(broker string) TestResult {
+func testTopicAliasZeroInvalid(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Alias Zero Is Invalid",
 		SpecRef: "MQTT-3.3.2.3.4-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-alias-zero", nil)
+	client, err := CreateAndConnectClient(cfg, "test-alias-zero", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -175,7 +179,7 @@ func testTopicAliasZeroInvalid(broker string) TestResult {
 
 // testTopicAliasWithoutName tests using alias without setting topic name first [MQTT-3.3.2.3.4-3]
 // "A sender MUST NOT send a PUBLISH packet containing a Topic Alias which has the value 0"
-func testTopicAliasWithoutName(broker string) TestResult {
+func testTopicAliasWithoutName(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Alias Requires Initial Topic Name",
@@ -192,7 +196,7 @@ func testTopicAliasWithoutName(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-alias-noname-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-alias-noname-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -212,7 +216,7 @@ func testTopicAliasWithoutName(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-alias-noname-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-alias-noname-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -276,7 +280,7 @@ func testTopicAliasWithoutName(broker string) TestResult {
 
 // testTopicAliasReset tests that topic aliases are connection-specific [MQTT-3.3.2.3.4-4]
 // "The Topic Alias mappings used by the Client and Server are independent from each other"
-func testTopicAliasReset(broker string) TestResult {
+func testTopicAliasReset(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Alias Reset On Reconnect",
@@ -284,7 +288,7 @@ func testTopicAliasReset(broker string) TestResult {
 	}
 
 	// First connection - establish alias
-	pub1, err := CreateAndConnectClient(broker, "test-alias-reset", nil)
+	pub1, err := CreateAndConnectClient(cfg, "test-alias-reset", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -314,7 +318,7 @@ func testTopicAliasReset(broker string) TestResult {
 	time.Sleep(200 * time.Millisecond)
 
 	// Reconnect - aliases should be reset
-	pub2, err := CreateAndConnectClient(broker, "test-alias-reset-2", nil)
+	pub2, err := CreateAndConnectClient(cfg, "test-alias-reset-2", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)

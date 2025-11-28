@@ -26,7 +26,7 @@ func WillTests() common.TestGroup {
 }
 
 // testWillMessageOnAbnormalDisconnect tests will message is sent on abnormal disconnect [MQTT-3.1.2-8]
-func testWillMessageOnAbnormalDisconnect(broker string) common.TestResult {
+func testWillMessageOnAbnormalDisconnect(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Will Message on Abnormal Disconnect",
@@ -46,7 +46,7 @@ func testWillMessageOnAbnormalDisconnect(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-will-sub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-will-sub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -59,7 +59,7 @@ func testWillMessageOnAbnormalDisconnect(broker string) common.TestResult {
 
 	// Create client with will message
 	client, err := CreateAndConnectClientWithWill(
-		broker,
+		cfg,
 		common.GenerateClientID("test-will-client"),
 		willTopic,
 		[]byte("will message"),
@@ -94,7 +94,7 @@ func testWillMessageOnAbnormalDisconnect(broker string) common.TestResult {
 }
 
 // testWillMessageNotSentOnCleanDisconnect tests will message NOT sent on DISCONNECT [MQTT-3.1.2-10]
-func testWillMessageNotSentOnCleanDisconnect(broker string) common.TestResult {
+func testWillMessageNotSentOnCleanDisconnect(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Will Message Not Sent on Clean Disconnect",
@@ -114,7 +114,7 @@ func testWillMessageNotSentOnCleanDisconnect(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-will-clean-sub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-will-clean-sub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -127,7 +127,7 @@ func testWillMessageNotSentOnCleanDisconnect(broker string) common.TestResult {
 
 	// Create client with will message
 	client, err := CreateAndConnectClientWithWill(
-		broker,
+		cfg,
 		common.GenerateClientID("test-will-clean-client"),
 		willTopic,
 		[]byte("will message"),
@@ -161,7 +161,7 @@ func testWillMessageNotSentOnCleanDisconnect(broker string) common.TestResult {
 }
 
 // testWillMessageQoS0 tests will message with QoS 0 [MQTT-3.1.2-9]
-func testWillMessageQoS0(broker string) common.TestResult {
+func testWillMessageQoS0(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Will Message QoS 0",
@@ -180,7 +180,7 @@ func testWillMessageQoS0(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-will-qos0-sub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-will-qos0-sub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -192,7 +192,7 @@ func testWillMessageQoS0(broker string) common.TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	client, err := CreateAndConnectClientWithWill(
-		broker,
+		cfg,
 		common.GenerateClientID("test-will-qos0-client"),
 		willTopic,
 		[]byte("will qos0"),
@@ -223,7 +223,7 @@ func testWillMessageQoS0(broker string) common.TestResult {
 }
 
 // testWillMessageQoS1 tests will message with QoS 1 [MQTT-3.1.2-14]
-func testWillMessageQoS1(broker string) common.TestResult {
+func testWillMessageQoS1(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Will Message QoS 1",
@@ -242,7 +242,7 @@ func testWillMessageQoS1(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-will-qos1-sub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-will-qos1-sub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -254,7 +254,7 @@ func testWillMessageQoS1(broker string) common.TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	client, err := CreateAndConnectClientWithWill(
-		broker,
+		cfg,
 		common.GenerateClientID("test-will-qos1-client"),
 		willTopic,
 		[]byte("will qos1"),
@@ -285,7 +285,7 @@ func testWillMessageQoS1(broker string) common.TestResult {
 }
 
 // testWillMessageQoS2 tests will message with QoS 2 [MQTT-3.1.2-14]
-func testWillMessageQoS2(broker string) common.TestResult {
+func testWillMessageQoS2(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Will Message QoS 2",
@@ -304,7 +304,7 @@ func testWillMessageQoS2(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-will-qos2-sub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-will-qos2-sub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -316,7 +316,7 @@ func testWillMessageQoS2(broker string) common.TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	client, err := CreateAndConnectClientWithWill(
-		broker,
+		cfg,
 		common.GenerateClientID("test-will-qos2-client"),
 		willTopic,
 		[]byte("will qos2"),
@@ -347,7 +347,7 @@ func testWillMessageQoS2(broker string) common.TestResult {
 }
 
 // testWillMessageRetained tests will message with retain flag [MQTT-3.1.2-17]
-func testWillMessageRetained(broker string) common.TestResult {
+func testWillMessageRetained(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Will Message Retained",
@@ -358,7 +358,7 @@ func testWillMessageRetained(broker string) common.TestResult {
 
 	// Create client with retained will message
 	client, err := CreateAndConnectClientWithWill(
-		broker,
+		cfg,
 		common.GenerateClientID("test-will-retained-client"),
 		willTopic,
 		[]byte("retained will"),
@@ -387,7 +387,7 @@ func testWillMessageRetained(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-will-retained-sub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-will-retained-sub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -411,7 +411,7 @@ func testWillMessageRetained(broker string) common.TestResult {
 }
 
 // testWillMessageNotRetained tests will message without retain flag [MQTT-3.1.2-16]
-func testWillMessageNotRetained(broker string) common.TestResult {
+func testWillMessageNotRetained(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Will Message Not Retained",
@@ -422,7 +422,7 @@ func testWillMessageNotRetained(broker string) common.TestResult {
 
 	// Create client with non-retained will message
 	client, err := CreateAndConnectClientWithWill(
-		broker,
+		cfg,
 		common.GenerateClientID("test-will-notretained-client"),
 		willTopic,
 		[]byte("non-retained will"),
@@ -451,7 +451,7 @@ func testWillMessageNotRetained(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-will-notretained-sub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-will-notretained-sub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)

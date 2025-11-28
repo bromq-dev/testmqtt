@@ -50,11 +50,11 @@ func AllTestGroups() []TestGroup {
 }
 
 // RunTests executes MQTT v5 conformance tests
-func RunTests(broker string, filter string, verbose bool) error {
+func RunTests(cfg common.Config, filter string, verbose bool) error {
 	groups := AllTestGroups()
 
 	fmt.Printf("\n%s\n", common.TitleStyle.Render("MQTT v5.0 Conformance Tests"))
-	fmt.Printf("%s\n", common.SubtitleStyle.Render(fmt.Sprintf("Broker: %s", broker)))
+	fmt.Printf("%s\n", common.SubtitleStyle.Render(fmt.Sprintf("Broker: %s", cfg.Broker)))
 	if verbose {
 		fmt.Printf("%s\n", common.SubtitleStyle.Render("Verbose mode: ON"))
 	}
@@ -73,7 +73,7 @@ func RunTests(broker string, filter string, verbose bool) error {
 		fmt.Printf("\n%s\n", common.GroupStyle.Render(group.Name))
 
 		for _, testFunc := range group.Tests {
-			result := testFunc(broker)
+			result := testFunc(cfg)
 			totalTests++
 
 			status := common.PassStyle.Render("✓ PASS")

@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"fmt"
 	"net"
 	"net/url"
@@ -26,14 +30,14 @@ func PacketValidationTests() TestGroup {
 
 // testReservedPacketType tests that reserved packet types are rejected [MQTT-2.1.2-1]
 // "A Server or Client MUST NOT send packets where the MQTT Control Packet type is 0 or 15"
-func testReservedPacketType(broker string) TestResult {
+func testReservedPacketType(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Reserved Packet Types (0, 15)",
 		SpecRef: "MQTT-2.1.2-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -118,14 +122,14 @@ func testReservedPacketType(broker string) TestResult {
 // testInvalidPacketFlags tests invalid flag combinations [MQTT-2.1.3-1]
 // "Where a flag bit is marked as 'Reserved', it is reserved for future use
 // and MUST be set to the value listed"
-func testInvalidPacketFlags(broker string) TestResult {
+func testInvalidPacketFlags(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Invalid Reserved Flags",
 		SpecRef: "MQTT-2.1.3-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -220,14 +224,14 @@ func testInvalidPacketFlags(broker string) TestResult {
 
 // testPublishFlagsValidation tests PUBLISH flags validation [MQTT-3.3.1-4]
 // "DUP, QoS, and RETAIN flags in the fixed header of a PUBLISH packet"
-func testPublishFlagsValidation(broker string) TestResult {
+func testPublishFlagsValidation(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBLISH Flags Validation",
 		SpecRef: "MQTT-3.3.1-4",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -318,14 +322,14 @@ func testPublishFlagsValidation(broker string) TestResult {
 // testPubrelFixedFlags tests PUBREL fixed flags [MQTT-3.6.1-1]
 // "Bits 3,2,1 and 0 of the Fixed Header of the PUBREL packet are reserved
 // and MUST be set to 0,0,1 and 0 respectively"
-func testPubrelFixedFlags(broker string) TestResult {
+func testPubrelFixedFlags(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBREL Fixed Flags (0x62)",
 		SpecRef: "MQTT-3.6.1-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -414,14 +418,14 @@ func testPubrelFixedFlags(broker string) TestResult {
 // testSubscribeFixedFlags tests SUBSCRIBE fixed flags [MQTT-3.8.1-1]
 // "Bits 3,2,1 and 0 of the Fixed Header of the SUBSCRIBE packet are reserved
 // and MUST be set to 0,0,1 and 0 respectively"
-func testSubscribeFixedFlags(broker string) TestResult {
+func testSubscribeFixedFlags(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "SUBSCRIBE Fixed Flags (0x82)",
 		SpecRef: "MQTT-3.8.1-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -513,14 +517,14 @@ func testSubscribeFixedFlags(broker string) TestResult {
 // testUnsubscribeFixedFlags tests UNSUBSCRIBE fixed flags [MQTT-3.10.1-1]
 // "Bits 3,2,1 and 0 of the Fixed Header of the UNSUBSCRIBE packet are reserved
 // and MUST be set to 0,0,1 and 0 respectively"
-func testUnsubscribeFixedFlags(broker string) TestResult {
+func testUnsubscribeFixedFlags(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "UNSUBSCRIBE Fixed Flags (0xA2)",
 		SpecRef: "MQTT-3.10.1-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)

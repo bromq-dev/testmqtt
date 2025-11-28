@@ -30,7 +30,7 @@ func ConnectionTests() common.TestGroup {
 }
 
 // testBasicConnect tests a basic MQTT v3.1.1 connection [MQTT-3.1.0-1]
-func testBasicConnect(broker string) common.TestResult {
+func testBasicConnect(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Basic Connect",
@@ -38,7 +38,7 @@ func testBasicConnect(broker string) common.TestResult {
 	}
 
 	clientID := common.GenerateClientID("test-basic-connect")
-	client, err := CreateAndConnectClient(broker, clientID, nil)
+	client, err := CreateAndConnectClient(cfg, clientID, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -57,7 +57,7 @@ func testBasicConnect(broker string) common.TestResult {
 }
 
 // testConnectWithClientID tests connection with specific client ID [MQTT-3.1.3-2]
-func testConnectWithClientID(broker string) common.TestResult {
+func testConnectWithClientID(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Connect with Specific Client ID",
@@ -66,7 +66,7 @@ func testConnectWithClientID(broker string) common.TestResult {
 
 	// Test with valid characters [MQTT-3.1.3-5]
 	clientID := "test-ClientID-123"
-	client, err := CreateAndConnectClient(broker, clientID, nil)
+	client, err := CreateAndConnectClient(cfg, clientID, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect with client ID failed: %w", err)
 		result.Duration = time.Since(start)
@@ -80,7 +80,7 @@ func testConnectWithClientID(broker string) common.TestResult {
 }
 
 // testCleanSessionTrue tests Clean Session = true [MQTT-3.1.2-6]
-func testCleanSessionTrue(broker string) common.TestResult {
+func testCleanSessionTrue(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Clean Session True",
@@ -90,7 +90,7 @@ func testCleanSessionTrue(broker string) common.TestResult {
 	clientID := common.GenerateClientID("test-clean-session-true")
 
 	// Connect with Clean Session = true (should start fresh)
-	client, err := CreateAndConnectClientWithSession(broker, clientID, true, nil)
+	client, err := CreateAndConnectClientWithSession(cfg, clientID, true, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect with clean session failed: %w", err)
 		result.Duration = time.Since(start)
@@ -104,7 +104,7 @@ func testCleanSessionTrue(broker string) common.TestResult {
 }
 
 // testCleanSessionFalse tests Clean Session = false [MQTT-3.1.2-4]
-func testCleanSessionFalse(broker string) common.TestResult {
+func testCleanSessionFalse(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Clean Session False",
@@ -114,7 +114,7 @@ func testCleanSessionFalse(broker string) common.TestResult {
 	clientID := common.GenerateClientID("test-clean-session-false")
 
 	// Connect with Clean Session = false
-	client1, err := CreateAndConnectClientWithSession(broker, clientID, false, nil)
+	client1, err := CreateAndConnectClientWithSession(cfg, clientID, false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -125,7 +125,7 @@ func testCleanSessionFalse(broker string) common.TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Reconnect with same client ID and Clean Session = false
-	client2, err := CreateAndConnectClientWithSession(broker, clientID, false, nil)
+	client2, err := CreateAndConnectClientWithSession(cfg, clientID, false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -139,7 +139,7 @@ func testCleanSessionFalse(broker string) common.TestResult {
 }
 
 // testZeroLengthClientID tests zero-length client ID with Clean Session = 1 [MQTT-3.1.3-6, MQTT-3.1.3-7]
-func testZeroLengthClientID(broker string) common.TestResult {
+func testZeroLengthClientID(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Zero-Length Client ID with Clean Session",
@@ -147,7 +147,7 @@ func testZeroLengthClientID(broker string) common.TestResult {
 	}
 
 	// Empty client ID with Clean Session = true should be accepted
-	client, err := CreateAndConnectClient(broker, "", nil)
+	client, err := CreateAndConnectClient(cfg, "", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect with empty client ID failed: %w", err)
 		result.Duration = time.Since(start)
@@ -161,7 +161,7 @@ func testZeroLengthClientID(broker string) common.TestResult {
 }
 
 // testZeroLengthClientIDWithCleanSessionFalse tests zero-length client ID with Clean Session = 0 [MQTT-3.1.3-8]
-func testZeroLengthClientIDWithCleanSessionFalse(broker string) common.TestResult {
+func testZeroLengthClientIDWithCleanSessionFalse(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Zero-Length Client ID with Clean Session False (Should Reject)",
@@ -170,7 +170,7 @@ func testZeroLengthClientIDWithCleanSessionFalse(broker string) common.TestResul
 
 	// Empty client ID with Clean Session = false should be rejected with CONNACK 0x02
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID("")
 	opts.SetCleanSession(false)
 	opts.SetConnectTimeout(5 * time.Second)
@@ -197,7 +197,7 @@ func testZeroLengthClientIDWithCleanSessionFalse(broker string) common.TestResul
 }
 
 // testDuplicateClientIDTakeover tests session takeover with duplicate client ID [MQTT-3.1.4-2]
-func testDuplicateClientIDTakeover(broker string) common.TestResult {
+func testDuplicateClientIDTakeover(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Duplicate Client ID Takeover",
@@ -207,7 +207,7 @@ func testDuplicateClientIDTakeover(broker string) common.TestResult {
 	clientID := common.GenerateClientID("test-takeover")
 
 	// First connection
-	client1, err := CreateAndConnectClient(broker, clientID, nil)
+	client1, err := CreateAndConnectClient(cfg, clientID, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -215,7 +215,7 @@ func testDuplicateClientIDTakeover(broker string) common.TestResult {
 	}
 
 	// Second connection with same client ID should cause takeover
-	client2, err := CreateAndConnectClient(broker, clientID, nil)
+	client2, err := CreateAndConnectClient(cfg, clientID, nil)
 	if err != nil {
 		client1.Disconnect(250)
 		result.Error = fmt.Errorf("second connect failed: %w", err)
@@ -238,7 +238,7 @@ func testDuplicateClientIDTakeover(broker string) common.TestResult {
 }
 
 // testConnectWithUsername tests connection with username (no password) [MQTT-3.1.2-18, MQTT-3.1.2-19]
-func testConnectWithUsername(broker string) common.TestResult {
+func testConnectWithUsername(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Connect with Username",
@@ -247,7 +247,7 @@ func testConnectWithUsername(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-username")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetUsername("testuser")
 	opts.SetCleanSession(true)
@@ -275,7 +275,7 @@ func testConnectWithUsername(broker string) common.TestResult {
 }
 
 // testConnectWithUsernameAndPassword tests connection with username and password [MQTT-3.1.2-21]
-func testConnectWithUsernameAndPassword(broker string) common.TestResult {
+func testConnectWithUsernameAndPassword(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Connect with Username and Password",
@@ -284,7 +284,7 @@ func testConnectWithUsernameAndPassword(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-username-password")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetUsername("testuser")
 	opts.SetPassword("testpass")
@@ -313,7 +313,7 @@ func testConnectWithUsernameAndPassword(broker string) common.TestResult {
 }
 
 // testPasswordWithoutUsername tests that password without username is invalid [MQTT-3.1.2-22]
-func testPasswordWithoutUsername(broker string) common.TestResult {
+func testPasswordWithoutUsername(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Password Without Username (Should Fail)",
@@ -322,7 +322,7 @@ func testPasswordWithoutUsername(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-password-only")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetPassword("testpass") // Password without username
 	opts.SetCleanSession(true)
@@ -345,7 +345,7 @@ func testPasswordWithoutUsername(broker string) common.TestResult {
 }
 
 // testProtocolLevel tests MQTT v3.1.1 protocol level [MQTT-3.1.2-2]
-func testProtocolLevel(broker string) common.TestResult {
+func testProtocolLevel(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Protocol Level 3.1.1",
@@ -354,7 +354,7 @@ func testProtocolLevel(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-protocol-level")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetProtocolVersion(4) // MQTT 3.1.1
 	opts.SetCleanSession(true)
@@ -381,7 +381,7 @@ func testProtocolLevel(broker string) common.TestResult {
 }
 
 // testKeepAlive tests keep-alive functionality [MQTT-3.1.2-23, MQTT-3.1.2-24]
-func testKeepAlive(broker string) common.TestResult {
+func testKeepAlive(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Keep Alive",
@@ -390,7 +390,7 @@ func testKeepAlive(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-keepalive")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(true)
 	opts.SetConnectTimeout(5 * time.Second)

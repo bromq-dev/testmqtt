@@ -24,7 +24,7 @@ func UnsubscribeTests() common.TestGroup {
 }
 
 // testBasicUnsubscribe tests basic unsubscribe functionality [MQTT-3.10.4-1]
-func testBasicUnsubscribe(broker string) common.TestResult {
+func testBasicUnsubscribe(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Basic Unsubscribe",
@@ -39,7 +39,7 @@ func testBasicUnsubscribe(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -51,7 +51,7 @@ func testBasicUnsubscribe(broker string) common.TestResult {
 	subscriber.Subscribe(topic, 1, nil).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -97,7 +97,7 @@ func testBasicUnsubscribe(broker string) common.TestResult {
 }
 
 // testUnsubscribeStopsDelivery tests unsubscribe stops new message delivery [MQTT-3.10.4-2]
-func testUnsubscribeStopsDelivery(broker string) common.TestResult {
+func testUnsubscribeStopsDelivery(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Unsubscribe Stops Delivery",
@@ -112,7 +112,7 @@ func testUnsubscribeStopsDelivery(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub-stop"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub-stop"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -128,7 +128,7 @@ func testUnsubscribeStopsDelivery(broker string) common.TestResult {
 	subscriber.Unsubscribe(topic).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub-stop-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub-stop-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -153,7 +153,7 @@ func testUnsubscribeStopsDelivery(broker string) common.TestResult {
 }
 
 // testUnsubscribeMultipleTopics tests unsubscribe from multiple topics [MQTT-3.10.3-1]
-func testUnsubscribeMultipleTopics(broker string) common.TestResult {
+func testUnsubscribeMultipleTopics(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Unsubscribe Multiple Topics",
@@ -168,7 +168,7 @@ func testUnsubscribeMultipleTopics(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub-multi"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub-multi"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -187,7 +187,7 @@ func testUnsubscribeMultipleTopics(broker string) common.TestResult {
 	subscriber.SubscribeMultiple(topics, nil).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub-multi-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub-multi-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -232,14 +232,14 @@ func testUnsubscribeMultipleTopics(broker string) common.TestResult {
 }
 
 // testUnsubscribeAcknowledgement tests UNSUBACK is sent [MQTT-3.10.4-4]
-func testUnsubscribeAcknowledgement(broker string) common.TestResult {
+func testUnsubscribeAcknowledgement(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Unsubscribe Acknowledgement",
 		SpecRef: "MQTT-3.10.4-4",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsuback"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsuback"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -269,14 +269,14 @@ func testUnsubscribeAcknowledgement(broker string) common.TestResult {
 }
 
 // testUnsubscribeNonExistentTopic tests unsubscribe from non-existent topic still gets UNSUBACK [MQTT-3.10.4-5]
-func testUnsubscribeNonExistentTopic(broker string) common.TestResult {
+func testUnsubscribeNonExistentTopic(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Unsubscribe Non-Existent Topic",
 		SpecRef: "MQTT-3.10.4-5",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub-nonexist"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub-nonexist"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

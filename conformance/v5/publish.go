@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -24,7 +28,7 @@ func PublishSubscribeTests() TestGroup {
 }
 
 // testBasicPubSub tests basic publish/subscribe [MQTT-3.3.1-1]
-func testBasicPubSub(broker string) TestResult {
+func testBasicPubSub(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Basic Publish/Subscribe",
@@ -43,7 +47,7 @@ func testBasicPubSub(broker string) TestResult {
 	}
 
 	// Create subscriber
-	sub, err := CreateAndConnectClient(broker, "test-sub-basic", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-basic", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -65,7 +69,7 @@ func testBasicPubSub(broker string) TestResult {
 	}
 
 	// Create publisher
-	pub, err := CreateAndConnectClient(broker, "test-pub-basic", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-basic", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -104,7 +108,7 @@ func testBasicPubSub(broker string) TestResult {
 }
 
 // testMultipleSubscribers tests multiple subscribers receiving messages
-func testMultipleSubscribers(broker string) TestResult {
+func testMultipleSubscribers(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Multiple Subscribers",
@@ -126,7 +130,7 @@ func testMultipleSubscribers(broker string) TestResult {
 			return true, nil
 		}
 
-		sub, err := CreateAndConnectClient(broker, fmt.Sprintf("test-sub-multi-%d", i), onPublish)
+		sub, err := CreateAndConnectClient(cfg, fmt.Sprintf("test-sub-multi-%d", i), onPublish)
 		if err != nil {
 			result.Error = fmt.Errorf("subscriber %d connect failed: %w", i, err)
 			result.Duration = time.Since(start)
@@ -153,7 +157,7 @@ func testMultipleSubscribers(broker string) TestResult {
 	}
 
 	// Create publisher
-	pub, err := CreateAndConnectClient(broker, "test-pub-multi", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-multi", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -200,7 +204,7 @@ func testMultipleSubscribers(broker string) TestResult {
 // testRetainedMessage tests retained message functionality [MQTT-3.3.1-5]
 // "When a new Non‑shared Subscription is made, the last retained message, if any,
 // on each matching topic name is sent to the Client"
-func testRetainedMessage(broker string) TestResult {
+func testRetainedMessage(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Retained Message",
@@ -210,7 +214,7 @@ func testRetainedMessage(broker string) TestResult {
 	topic := fmt.Sprintf("test/retained/%d", time.Now().UnixNano())
 
 	// Publish a retained message
-	pub, err := CreateAndConnectClient(broker, "test-pub-retained", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-retained", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -248,7 +252,7 @@ func testRetainedMessage(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-retained", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-retained", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -271,7 +275,7 @@ func testRetainedMessage(broker string) TestResult {
 	time.Sleep(500 * time.Millisecond)
 
 	// Clear the retained message
-	pub2, _ := CreateAndConnectClient(broker, "test-pub-clear", nil)
+	pub2, _ := CreateAndConnectClient(cfg, "test-pub-clear", nil)
 	if pub2 != nil {
 		pub2.Publish(ctx, &paho.Publish{Topic: topic, QoS: 0, Retain: true, Payload: []byte{}})
 		pub2.Disconnect(&paho.Disconnect{ReasonCode: 0})
@@ -291,7 +295,7 @@ func testRetainedMessage(broker string) TestResult {
 
 // testEmptyPayload tests publishing with empty payload
 // "A zero-byte Payload is valid"
-func testEmptyPayload(broker string) TestResult {
+func testEmptyPayload(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Empty Payload",
@@ -313,7 +317,7 @@ func testEmptyPayload(broker string) TestResult {
 	}
 
 	// Create subscriber
-	sub, err := CreateAndConnectClient(broker, "test-sub-empty", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-empty", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -334,7 +338,7 @@ func testEmptyPayload(broker string) TestResult {
 	}
 
 	// Create publisher
-	pub, err := CreateAndConnectClient(broker, "test-pub-empty", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-empty", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -377,7 +381,7 @@ func testEmptyPayload(broker string) TestResult {
 // testUnsubscribe tests unsubscribe functionality [MQTT-3.10.4-1]
 // "The Server MUST stop adding any new messages which match the Topic Filters,
 // for delivery to that Client"
-func testUnsubscribe(broker string) TestResult {
+func testUnsubscribe(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Unsubscribe",
@@ -395,7 +399,7 @@ func testUnsubscribe(broker string) TestResult {
 	}
 
 	// Create subscriber
-	sub, err := CreateAndConnectClient(broker, "test-sub-unsub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-unsub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -416,7 +420,7 @@ func testUnsubscribe(broker string) TestResult {
 	}
 
 	// Create publisher
-	pub, err := CreateAndConnectClient(broker, "test-pub-unsub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-unsub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

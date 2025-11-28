@@ -27,7 +27,7 @@ func QoSTests() common.TestGroup {
 }
 
 // testQoS0AtMostOnce tests QoS 0 at-most-once delivery [MQTT-4.3.1-1]
-func testQoS0AtMostOnce(broker string) common.TestResult {
+func testQoS0AtMostOnce(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS 0 At Most Once",
@@ -42,7 +42,7 @@ func testQoS0AtMostOnce(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos0"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos0"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -54,7 +54,7 @@ func testQoS0AtMostOnce(broker string) common.TestResult {
 	subscriber.Subscribe(topic, 0, nil).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos0-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos0-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -83,7 +83,7 @@ func testQoS0AtMostOnce(broker string) common.TestResult {
 }
 
 // testQoS1AtLeastOnce tests QoS 1 at-least-once delivery [MQTT-4.3.2-1]
-func testQoS1AtLeastOnce(broker string) common.TestResult {
+func testQoS1AtLeastOnce(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS 1 At Least Once",
@@ -98,7 +98,7 @@ func testQoS1AtLeastOnce(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos1-atleast"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos1-atleast"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -110,7 +110,7 @@ func testQoS1AtLeastOnce(broker string) common.TestResult {
 	subscriber.Subscribe(topic, 1, nil).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos1-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos1-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -145,7 +145,7 @@ func testQoS1AtLeastOnce(broker string) common.TestResult {
 }
 
 // testQoS2ExactlyOnce tests QoS 2 exactly-once delivery [MQTT-4.3.3-1]
-func testQoS2ExactlyOnce(broker string) common.TestResult {
+func testQoS2ExactlyOnce(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS 2 Exactly Once",
@@ -160,7 +160,7 @@ func testQoS2ExactlyOnce(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos2-exactly"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos2-exactly"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -172,7 +172,7 @@ func testQoS2ExactlyOnce(broker string) common.TestResult {
 	subscriber.Subscribe(topic, 2, nil).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos2-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos2-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -217,7 +217,7 @@ func testQoS2ExactlyOnce(broker string) common.TestResult {
 }
 
 // testQoSDowngrade tests QoS downgrade [MQTT-3.8.4-6]
-func testQoSDowngrade(broker string) common.TestResult {
+func testQoSDowngrade(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS Downgrade",
@@ -225,7 +225,7 @@ func testQoSDowngrade(broker string) common.TestResult {
 	}
 
 	// Subscribe with QoS 0
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos-downgrade"), nil)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos-downgrade"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -237,7 +237,7 @@ func testQoSDowngrade(broker string) common.TestResult {
 	subscriber.Subscribe(topic, 0, nil).Wait() // Subscribe with QoS 0
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos-downgrade-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos-downgrade-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -261,7 +261,7 @@ func testQoSDowngrade(broker string) common.TestResult {
 }
 
 // testMessageOrderingQoS1 tests message ordering for QoS 1 [MQTT-4.6.0-2]
-func testMessageOrderingQoS1(broker string) common.TestResult {
+func testMessageOrderingQoS1(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Message Ordering QoS 1",
@@ -276,7 +276,7 @@ func testMessageOrderingQoS1(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-order-qos1"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-order-qos1"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -288,7 +288,7 @@ func testMessageOrderingQoS1(broker string) common.TestResult {
 	subscriber.Subscribe(topic, 1, nil).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-order-qos1-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-order-qos1-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -334,7 +334,7 @@ func testMessageOrderingQoS1(broker string) common.TestResult {
 }
 
 // testMessageOrderingQoS2 tests message ordering for QoS 2 [MQTT-4.6.0-3]
-func testMessageOrderingQoS2(broker string) common.TestResult {
+func testMessageOrderingQoS2(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Message Ordering QoS 2",
@@ -349,7 +349,7 @@ func testMessageOrderingQoS2(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-order-qos2"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-order-qos2"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -361,7 +361,7 @@ func testMessageOrderingQoS2(broker string) common.TestResult {
 	subscriber.Subscribe(topic, 2, nil).Wait()
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-order-qos2-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-order-qos2-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -402,14 +402,14 @@ func testMessageOrderingQoS2(broker string) common.TestResult {
 }
 
 // testQoS1Acknowledgement tests PUBACK for QoS 1 [MQTT-4.3.2-2]
-func testQoS1Acknowledgement(broker string) common.TestResult {
+func testQoS1Acknowledgement(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS 1 PUBACK Acknowledgement",
 		SpecRef: "MQTT-4.3.2-2",
 	}
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos1-puback"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos1-puback"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -437,14 +437,14 @@ func testQoS1Acknowledgement(broker string) common.TestResult {
 }
 
 // testQoS2HandshakeFull tests complete QoS 2 handshake [MQTT-4.3.3-2]
-func testQoS2HandshakeFull(broker string) common.TestResult {
+func testQoS2HandshakeFull(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "QoS 2 Full Handshake",
 		SpecRef: "MQTT-4.3.3-2",
 	}
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-qos2-handshake"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-qos2-handshake"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

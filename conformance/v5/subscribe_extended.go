@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -28,14 +32,14 @@ func SubscribeExtendedTests() TestGroup {
 
 // testSubscribePacketIdentifier tests SUBSCRIBE packet identifier [MQTT-3.8.2-1]
 // "The Packet Identifier field is used to identify the SUBSCRIBE packet"
-func testSubscribePacketIdentifier(broker string) TestResult {
+func testSubscribePacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "SUBSCRIBE Packet Identifier",
 		SpecRef: "MQTT-3.8.2-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-sub-packetid", nil)
+	client, err := CreateAndConnectClient(cfg, "test-sub-packetid", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -70,14 +74,14 @@ func testSubscribePacketIdentifier(broker string) TestResult {
 
 // testSubscribeMultipleFilters tests multiple subscriptions in one packet [MQTT-3.8.3-3]
 // "The Payload of a SUBSCRIBE packet MUST contain at least one Topic Filter and Subscription Options pair"
-func testSubscribeMultipleFilters(broker string) TestResult {
+func testSubscribeMultipleFilters(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "SUBSCRIBE Multiple Topic Filters",
 		SpecRef: "MQTT-3.8.3-3",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-sub-multi", nil)
+	client, err := CreateAndConnectClient(cfg, "test-sub-multi", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -114,14 +118,14 @@ func testSubscribeMultipleFilters(broker string) TestResult {
 
 // testSubscriptionOptions tests subscription options [MQTT-3.8.3.1]
 // "Subscription Options contains fields QoS, NL (No Local), RAP (Retain As Published), and Retain Handling"
-func testSubscriptionOptions(broker string) TestResult {
+func testSubscriptionOptions(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Subscription Options",
 		SpecRef: "MQTT-3.8.3.1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-sub-options", nil)
+	client, err := CreateAndConnectClient(cfg, "test-sub-options", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -168,14 +172,14 @@ func testSubscriptionOptions(broker string) TestResult {
 
 // testSubscribeQoSDowngrade tests QoS downgrade [MQTT-3.8.4-5]
 // "The Server might grant a lower QoS than the Client requested"
-func testSubscribeQoSDowngrade(broker string) TestResult {
+func testSubscribeQoSDowngrade(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "SUBSCRIBE QoS Downgrade Allowed",
 		SpecRef: "MQTT-3.8.4-5",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-sub-downgrade", nil)
+	client, err := CreateAndConnectClient(cfg, "test-sub-downgrade", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -215,14 +219,14 @@ func testSubscribeQoSDowngrade(broker string) TestResult {
 
 // testSUBACKReasonCodes tests SUBACK reason codes [MQTT-3.9.3-1]
 // "The SUBACK packet contains a list of Reason Codes"
-func testSUBACKReasonCodes(broker string) TestResult {
+func testSUBACKReasonCodes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "SUBACK Reason Codes",
 		SpecRef: "MQTT-3.9.3-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-suback-reason", nil)
+	client, err := CreateAndConnectClient(cfg, "test-suback-reason", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -264,7 +268,7 @@ func testSUBACKReasonCodes(broker string) TestResult {
 // testRetainAsPublished tests Retain As Published option [MQTT-3.8.3.1-3]
 // "If Retain As Published is set to 1, the Server MUST set the RETAIN flag equal
 // to the RETAIN flag in the PUBLISH packet"
-func testRetainAsPublished(broker string) TestResult {
+func testRetainAsPublished(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Retain As Published Option",
@@ -281,7 +285,7 @@ func testRetainAsPublished(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-rap-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-rap-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -307,7 +311,7 @@ func testRetainAsPublished(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-rap-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-rap-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -349,7 +353,7 @@ func testRetainAsPublished(broker string) TestResult {
 // testNoLocal tests No Local option [MQTT-3.8.3.1-2]
 // "If No Local is set to 1, Application Messages MUST NOT be forwarded to
 // a connection with a ClientID equal to the ClientID of the publishing connection"
-func testNoLocal(broker string) TestResult {
+func testNoLocal(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "No Local Subscription Option",
@@ -366,7 +370,7 @@ func testNoLocal(broker string) TestResult {
 		return true, nil
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-nolocal", onPublish)
+	client, err := CreateAndConnectClient(cfg, "test-nolocal", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -426,7 +430,7 @@ func testNoLocal(broker string) TestResult {
 
 // testRetainHandling tests Retain Handling option [MQTT-3.8.3.1-4]
 // "Retain Handling indicates whether retained messages are sent when the subscription is established"
-func testRetainHandling(broker string) TestResult {
+func testRetainHandling(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Retain Handling Option",
@@ -434,7 +438,7 @@ func testRetainHandling(broker string) TestResult {
 	}
 
 	// First publish a retained message
-	pub, err := CreateAndConnectClient(broker, "test-retainhandle-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-retainhandle-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -469,7 +473,7 @@ func testRetainHandling(broker string) TestResult {
 	}
 
 	// Subscribe with RetainHandling = 2 (do not send retained messages)
-	sub, err := CreateAndConnectClient(broker, "test-retainhandle-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-retainhandle-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)

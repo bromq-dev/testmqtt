@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -27,7 +31,7 @@ func TopicTests() TestGroup {
 // testSingleLevelWildcard tests single-level wildcard (+) [MQTT-4.7.1-2]
 // "The single-level wildcard can be used at any level in the Topic Filter,
 // including first and last levels"
-func testSingleLevelWildcard(broker string) TestResult {
+func testSingleLevelWildcard(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Single-Level Wildcard (+)",
@@ -44,7 +48,7 @@ func testSingleLevelWildcard(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-wildcard+", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-wildcard+", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -65,7 +69,7 @@ func testSingleLevelWildcard(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-wildcard+", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-wildcard+", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -121,7 +125,7 @@ func testSingleLevelWildcard(broker string) TestResult {
 // testMultiLevelWildcard tests multi-level wildcard (#) [MQTT-4.7.1-1]
 // "The multi-level wildcard character MUST be specified either on its own or
 // following a topic level separator"
-func testMultiLevelWildcard(broker string) TestResult {
+func testMultiLevelWildcard(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Multi-Level Wildcard (#)",
@@ -138,7 +142,7 @@ func testMultiLevelWildcard(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-wildcard#", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-wildcard#", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -159,7 +163,7 @@ func testMultiLevelWildcard(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-wildcard#", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-wildcard#", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -215,7 +219,7 @@ func testMultiLevelWildcard(broker string) TestResult {
 
 // testTopicLevels tests topic level handling [MQTT-4.7.3-1]
 // "The Topic Name in the PUBLISH packet MUST NOT contain wildcard characters"
-func testTopicLevels(broker string) TestResult {
+func testTopicLevels(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Levels",
@@ -236,7 +240,7 @@ func testTopicLevels(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-levels", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-levels", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -256,7 +260,7 @@ func testTopicLevels(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-levels", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-levels", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -295,7 +299,7 @@ func testTopicLevels(broker string) TestResult {
 // testDollarTopics tests $SYS and $ topic behavior [MQTT-4.7.2-1]
 // "The Server MUST NOT match Topic Filters starting with a wildcard character
 // (# or +) with Topic Names beginning with a $ character"
-func testDollarTopics(broker string) TestResult {
+func testDollarTopics(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Dollar Topics ($SYS)",
@@ -312,7 +316,7 @@ func testDollarTopics(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-dollar", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-dollar", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -333,7 +337,7 @@ func testDollarTopics(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-dollar", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-dollar", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -395,7 +399,7 @@ func testDollarTopics(broker string) TestResult {
 
 // testTopicLength tests topic name length constraints
 // "All Topic Names and Topic Filters MUST be at least one character long"
-func testTopicLength(broker string) TestResult {
+func testTopicLength(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Name Length",
@@ -415,7 +419,7 @@ func testTopicLength(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-length", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-length", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -435,7 +439,7 @@ func testTopicLength(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-length", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-length", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -473,7 +477,7 @@ func testTopicLength(broker string) TestResult {
 
 // testTopicNameValidation tests topic name validation requirements
 // "Topic Names and Topic Filters are UTF-8 Encoded Strings"
-func testTopicNameValidation(broker string) TestResult {
+func testTopicNameValidation(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Topic Name Validation",
@@ -493,7 +497,7 @@ func testTopicNameValidation(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-sub-validation", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-sub-validation", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -513,7 +517,7 @@ func testTopicNameValidation(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pub-validation", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pub-validation", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

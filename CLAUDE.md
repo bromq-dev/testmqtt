@@ -28,6 +28,9 @@ Run the tool:
 # Conformance tests
 ./bin/testmqtt conformance -version 5 -broker tcp://localhost:1883 -tests all
 
+# Conformance tests with authentication
+./bin/testmqtt conformance -version 5 -broker tcp://localhost:1883 -u myuser -p mypass
+
 # Performance stress test
 ./bin/testmqtt performance stress -broker tcp://localhost:1883 -duration 60s -publishers 100 -subscribers 10 -topics 10 -qos 1
 

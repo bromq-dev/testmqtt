@@ -21,7 +21,7 @@ func PingTests() common.TestGroup {
 }
 
 // testPingRequest tests PINGREQ/PINGRESP exchange [MQTT-3.1.2-23]
-func testPingRequest(broker string) common.TestResult {
+func testPingRequest(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "PINGREQ/PINGRESP Exchange",
@@ -30,7 +30,7 @@ func testPingRequest(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-ping")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(true)
 	opts.SetConnectTimeout(5 * time.Second)
@@ -68,7 +68,7 @@ func testPingRequest(broker string) common.TestResult {
 }
 
 // testKeepAliveZero tests keep-alive = 0 (disabled) [MQTT-3.1.2-10]
-func testKeepAliveZero(broker string) common.TestResult {
+func testKeepAliveZero(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Keep Alive Zero (Disabled)",
@@ -77,7 +77,7 @@ func testKeepAliveZero(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-keepalive-zero")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(true)
 	opts.SetConnectTimeout(5 * time.Second)
@@ -113,7 +113,7 @@ func testKeepAliveZero(broker string) common.TestResult {
 }
 
 // testKeepAliveEnforcement tests server disconnects after 1.5x keep-alive [MQTT-3.1.2-24]
-func testKeepAliveEnforcement(broker string) common.TestResult {
+func testKeepAliveEnforcement(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Keep Alive Enforcement",
@@ -126,7 +126,7 @@ func testKeepAliveEnforcement(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-keepalive-enforce")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(true)
 	opts.SetConnectTimeout(5 * time.Second)

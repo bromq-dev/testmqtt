@@ -9,13 +9,20 @@ import (
 )
 
 // CreateAndConnectClient creates and connects a MQTT v3.1.1 client with optional message handler
-func CreateAndConnectClient(broker, clientID string, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
+func CreateAndConnectClient(cfg common.Config, clientID string, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(true)
 	opts.SetConnectTimeout(5 * time.Second)
 	opts.SetAutoReconnect(false)
+
+	if cfg.Username != "" {
+		opts.SetUsername(cfg.Username)
+	}
+	if cfg.Password != "" {
+		opts.SetPassword(cfg.Password)
+	}
 
 	if onMessage != nil {
 		opts.SetDefaultPublishHandler(onMessage)
@@ -34,13 +41,20 @@ func CreateAndConnectClient(broker, clientID string, onMessage mqtt.MessageHandl
 }
 
 // CreateAndConnectClientWithSession creates and connects a MQTT v3.1.1 client with Clean Session control
-func CreateAndConnectClientWithSession(broker, clientID string, cleanSession bool, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
+func CreateAndConnectClientWithSession(cfg common.Config, clientID string, cleanSession bool, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(cleanSession)
 	opts.SetConnectTimeout(5 * time.Second)
 	opts.SetAutoReconnect(false)
+
+	if cfg.Username != "" {
+		opts.SetUsername(cfg.Username)
+	}
+	if cfg.Password != "" {
+		opts.SetPassword(cfg.Password)
+	}
 
 	if onMessage != nil {
 		opts.SetDefaultPublishHandler(onMessage)
@@ -59,14 +73,21 @@ func CreateAndConnectClientWithSession(broker, clientID string, cleanSession boo
 }
 
 // CreateAndConnectClientWithWill creates a client with a will message
-func CreateAndConnectClientWithWill(broker, clientID string, willTopic string, willPayload []byte, willQos byte, willRetained bool, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
+func CreateAndConnectClientWithWill(cfg common.Config, clientID string, willTopic string, willPayload []byte, willQos byte, willRetained bool, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(true)
 	opts.SetConnectTimeout(5 * time.Second)
 	opts.SetAutoReconnect(false)
 	opts.SetWill(willTopic, string(willPayload), willQos, willRetained)
+
+	if cfg.Username != "" {
+		opts.SetUsername(cfg.Username)
+	}
+	if cfg.Password != "" {
+		opts.SetPassword(cfg.Password)
+	}
 
 	if onMessage != nil {
 		opts.SetDefaultPublishHandler(onMessage)
@@ -85,14 +106,21 @@ func CreateAndConnectClientWithWill(broker, clientID string, willTopic string, w
 }
 
 // CreateClientWithKeepAlive creates a client with specified keep-alive interval
-func CreateClientWithKeepAlive(broker, clientID string, keepAlive time.Duration, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
+func CreateClientWithKeepAlive(cfg common.Config, clientID string, keepAlive time.Duration, onMessage mqtt.MessageHandler) (mqtt.Client, error) {
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetCleanSession(true)
 	opts.SetConnectTimeout(5 * time.Second)
 	opts.SetAutoReconnect(false)
 	opts.SetKeepAlive(keepAlive)
+
+	if cfg.Username != "" {
+		opts.SetUsername(cfg.Username)
+	}
+	if cfg.Password != "" {
+		opts.SetPassword(cfg.Password)
+	}
 
 	if onMessage != nil {
 		opts.SetDefaultPublishHandler(onMessage)
@@ -108,9 +136,4 @@ func CreateClientWithKeepAlive(broker, clientID string, keepAlive time.Duration,
 	}
 
 	return client, nil
-}
-
-// dialBroker is a wrapper for common.DialBroker for compatibility
-func dialBroker(broker string) (interface{}, error) {
-	return common.DialBroker(broker)
 }

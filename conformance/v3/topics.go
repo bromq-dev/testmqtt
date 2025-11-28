@@ -27,7 +27,7 @@ func TopicTests() common.TestGroup {
 }
 
 // testTopicWildcardMultiLevel tests multi-level wildcard # [MQTT-4.7.1-2]
-func testTopicWildcardMultiLevel(broker string) common.TestResult {
+func testTopicWildcardMultiLevel(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic Multi-Level Wildcard #",
@@ -42,7 +42,7 @@ func testTopicWildcardMultiLevel(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-multi-wildcard"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-multi-wildcard"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -61,7 +61,7 @@ func testTopicWildcardMultiLevel(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-multi-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-multi-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -89,7 +89,7 @@ func testTopicWildcardMultiLevel(broker string) common.TestResult {
 }
 
 // testTopicWildcardSingleLevel tests single-level wildcard + [MQTT-4.7.1-3]
-func testTopicWildcardSingleLevel(broker string) common.TestResult {
+func testTopicWildcardSingleLevel(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic Single-Level Wildcard +",
@@ -104,7 +104,7 @@ func testTopicWildcardSingleLevel(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-single-wildcard"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-single-wildcard"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -123,7 +123,7 @@ func testTopicWildcardSingleLevel(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-single-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-single-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -155,7 +155,7 @@ func testTopicWildcardSingleLevel(broker string) common.TestResult {
 }
 
 // testTopicWildcardCombination tests combination of + and # wildcards
-func testTopicWildcardCombination(broker string) common.TestResult {
+func testTopicWildcardCombination(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic Wildcard Combination +/#",
@@ -170,7 +170,7 @@ func testTopicWildcardCombination(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-combo-wildcard"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-combo-wildcard"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -189,7 +189,7 @@ func testTopicWildcardCombination(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-combo-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-combo-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -215,7 +215,7 @@ func testTopicWildcardCombination(broker string) common.TestResult {
 }
 
 // testTopicLevelSeparator tests topic level separator / handling [MQTT-4.7.3-1]
-func testTopicLevelSeparator(broker string) common.TestResult {
+func testTopicLevelSeparator(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic Level Separator",
@@ -230,7 +230,7 @@ func testTopicLevelSeparator(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-separator"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-separator"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -244,7 +244,7 @@ func testTopicLevelSeparator(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-sep-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-sep-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -271,7 +271,7 @@ func testTopicLevelSeparator(broker string) common.TestResult {
 }
 
 // testTopicSystemPrefix tests $SYS topics not matched by wildcards [MQTT-4.7.2-1]
-func testTopicSystemPrefix(broker string) common.TestResult {
+func testTopicSystemPrefix(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic $SYS Prefix",
@@ -288,7 +288,7 @@ func testTopicSystemPrefix(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-sys"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-sys"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -301,7 +301,7 @@ func testTopicSystemPrefix(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-sys-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-sys-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -327,7 +327,7 @@ func testTopicSystemPrefix(broker string) common.TestResult {
 }
 
 // testTopicCaseSensitivity tests that topics are case sensitive [MQTT-4.7.3-1]
-func testTopicCaseSensitivity(broker string) common.TestResult {
+func testTopicCaseSensitivity(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic Case Sensitivity",
@@ -342,7 +342,7 @@ func testTopicCaseSensitivity(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-case"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-case"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -355,7 +355,7 @@ func testTopicCaseSensitivity(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-case-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-case-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -384,7 +384,7 @@ func testTopicCaseSensitivity(broker string) common.TestResult {
 }
 
 // testTopicWithSpaces tests that topics can include spaces [MQTT-4.7.3-1]
-func testTopicWithSpaces(broker string) common.TestResult {
+func testTopicWithSpaces(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic With Spaces",
@@ -399,7 +399,7 @@ func testTopicWithSpaces(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-spaces"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-spaces"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -412,7 +412,7 @@ func testTopicWithSpaces(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-spaces-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-spaces-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -437,7 +437,7 @@ func testTopicWithSpaces(broker string) common.TestResult {
 }
 
 // testTopicLeadingTrailingSlash tests leading/trailing slash creates distinct topics [MQTT-4.7.3-1]
-func testTopicLeadingTrailingSlash(broker string) common.TestResult {
+func testTopicLeadingTrailingSlash(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Topic Leading/Trailing Slash",
@@ -452,7 +452,7 @@ func testTopicLeadingTrailingSlash(broker string) common.TestResult {
 		mu.Unlock()
 	}
 
-	subscriber, err := CreateAndConnectClient(broker, common.GenerateClientID("test-slash"), messageHandler)
+	subscriber, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-slash"), messageHandler)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -468,7 +468,7 @@ func testTopicLeadingTrailingSlash(broker string) common.TestResult {
 
 	time.Sleep(100 * time.Millisecond)
 
-	publisher, err := CreateAndConnectClient(broker, common.GenerateClientID("test-slash-pub"), nil)
+	publisher, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-slash-pub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

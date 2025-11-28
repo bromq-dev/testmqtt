@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -24,7 +28,7 @@ func SubscriptionIdentifierTests() TestGroup {
 // testSubscriptionIdentifierBasic tests basic subscription identifier [MQTT-3.8.2.1.2]
 // "The Subscription Identifier is associated with any subscription created or modified
 // as the result of this SUBSCRIBE packet"
-func testSubscriptionIdentifierBasic(broker string) TestResult {
+func testSubscriptionIdentifierBasic(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Subscription Identifier Basic",
@@ -45,7 +49,7 @@ func testSubscriptionIdentifierBasic(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-subid-basic-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-subid-basic-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -71,7 +75,7 @@ func testSubscriptionIdentifierBasic(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-subid-basic-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-subid-basic-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -114,14 +118,14 @@ func testSubscriptionIdentifierBasic(broker string) TestResult {
 
 // testSubscriptionIdentifierZeroInvalid tests that subscription identifier 0 is invalid [MQTT-3.8.2.1.2]
 // "A Subscription Identifier value of 0 is a Protocol Error"
-func testSubscriptionIdentifierZeroInvalid(broker string) TestResult {
+func testSubscriptionIdentifierZeroInvalid(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Subscription Identifier Zero Is Invalid",
 		SpecRef: "MQTT-3.8.2.1.2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-subid-zero", nil)
+	client, err := CreateAndConnectClient(cfg, "test-subid-zero", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -160,7 +164,7 @@ func testSubscriptionIdentifierZeroInvalid(broker string) TestResult {
 // testSubscriptionIdentifierPersistence tests subscription identifier with sessions [MQTT-3.8.2.1.2]
 // "The Subscription Identifier is part of the Session State in the Server and is returned
 // to the Client whenever a message is sent as a result of a matching subscription"
-func testSubscriptionIdentifierPersistence(broker string) TestResult {
+func testSubscriptionIdentifierPersistence(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Subscription Identifier Session Persistence",
@@ -168,7 +172,7 @@ func testSubscriptionIdentifierPersistence(broker string) TestResult {
 	}
 
 	// First connection - create subscription with identifier (CleanStart = false for session persistence)
-	sub1, err := CreateAndConnectClientWithSession(broker, "test-subid-persist", false, nil)
+	sub1, err := CreateAndConnectClientWithSession(cfg, "test-subid-persist", false, nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -211,7 +215,7 @@ func testSubscriptionIdentifierPersistence(broker string) TestResult {
 	}
 
 	// Reconnect with same client ID and CleanStart = false (session should persist)
-	sub2, err := CreateAndConnectClientWithSession(broker, "test-subid-persist", false, onPublish)
+	sub2, err := CreateAndConnectClientWithSession(cfg, "test-subid-persist", false, onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -222,7 +226,7 @@ func testSubscriptionIdentifierPersistence(broker string) TestResult {
 	time.Sleep(500 * time.Millisecond)
 
 	// Publish message - subscription should already exist from persisted session
-	pub, err := CreateAndConnectClient(broker, "test-subid-persist-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-subid-persist-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

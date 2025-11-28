@@ -46,7 +46,7 @@ func RemainingLengthTests() common.TestGroup {
 }
 
 // testConnectPacketValidation tests CONNECT packet structure [MQTT-3.1.0-1]
-func testConnectPacketValidation(broker string) common.TestResult {
+func testConnectPacketValidation(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "CONNECT Packet Validation",
@@ -54,7 +54,7 @@ func testConnectPacketValidation(broker string) common.TestResult {
 	}
 
 	// Valid CONNECT packet structure
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-connect-valid"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-connect-valid"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -68,14 +68,14 @@ func testConnectPacketValidation(broker string) common.TestResult {
 }
 
 // testPublishPacketValidation tests PUBLISH packet structure [MQTT-3.3.1-1]
-func testPublishPacketValidation(broker string) common.TestResult {
+func testPublishPacketValidation(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "PUBLISH Packet Validation",
 		SpecRef: "MQTT-3.3.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-pub-valid"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-pub-valid"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -98,14 +98,14 @@ func testPublishPacketValidation(broker string) common.TestResult {
 }
 
 // testSubscribePacketValidation tests SUBSCRIBE packet structure [MQTT-3.8.1-1]
-func testSubscribePacketValidation(broker string) common.TestResult {
+func testSubscribePacketValidation(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "SUBSCRIBE Packet Validation",
 		SpecRef: "MQTT-3.8.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-sub-valid"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-sub-valid"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -128,14 +128,14 @@ func testSubscribePacketValidation(broker string) common.TestResult {
 }
 
 // testUnsubscribePacketValidation tests UNSUBSCRIBE packet structure [MQTT-3.10.1-1]
-func testUnsubscribePacketValidation(broker string) common.TestResult {
+func testUnsubscribePacketValidation(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "UNSUBSCRIBE Packet Validation",
 		SpecRef: "MQTT-3.10.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-unsub-valid"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-unsub-valid"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -161,14 +161,14 @@ func testUnsubscribePacketValidation(broker string) common.TestResult {
 }
 
 // testPacketIdentifierValidity tests packet identifier usage [MQTT-2.3.1]
-func testPacketIdentifierValidity(broker string) common.TestResult {
+func testPacketIdentifierValidity(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Packet Identifier Validity",
 		SpecRef: "MQTT-2.3.1",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-pktid"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-pktid"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -193,14 +193,14 @@ func testPacketIdentifierValidity(broker string) common.TestResult {
 }
 
 // testValidUTF8String tests valid UTF-8 strings [MQTT-1.5.3-1]
-func testValidUTF8String(broker string) common.TestResult {
+func testValidUTF8String(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Valid UTF-8 Strings",
 		SpecRef: "MQTT-1.5.3-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-utf8-valid"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-utf8-valid"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -232,14 +232,14 @@ func testValidUTF8String(broker string) common.TestResult {
 }
 
 // testUTF8WithSpaces tests UTF-8 strings can contain spaces [MQTT-4.7.3-1]
-func testUTF8WithSpaces(broker string) common.TestResult {
+func testUTF8WithSpaces(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "UTF-8 Strings with Spaces",
 		SpecRef: "MQTT-4.7.3-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-utf8-spaces"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-utf8-spaces"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -262,14 +262,14 @@ func testUTF8WithSpaces(broker string) common.TestResult {
 }
 
 // testUTF8CaseSensitive tests UTF-8 strings are case sensitive [MQTT-4.7.3-1]
-func testUTF8CaseSensitive(broker string) common.TestResult {
+func testUTF8CaseSensitive(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "UTF-8 Case Sensitivity",
 		SpecRef: "MQTT-4.7.3-4",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-utf8-case"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-utf8-case"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -287,14 +287,14 @@ func testUTF8CaseSensitive(broker string) common.TestResult {
 }
 
 // testUTF8MaxLength tests UTF-8 string maximum length [MQTT-4.7.3-3]
-func testUTF8MaxLength(broker string) common.TestResult {
+func testUTF8MaxLength(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "UTF-8 Maximum Length",
 		SpecRef: "MQTT-4.7.3-3",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-utf8-maxlen"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-utf8-maxlen"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -319,14 +319,14 @@ func testUTF8MaxLength(broker string) common.TestResult {
 }
 
 // testRemainingLengthSmallPacket tests small packets with 1-byte remaining length [MQTT-2.2.3]
-func testRemainingLengthSmallPacket(broker string) common.TestResult {
+func testRemainingLengthSmallPacket(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Remaining Length Small Packet",
 		SpecRef: "MQTT-2.2.3",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-remlen-small"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-remlen-small"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -349,14 +349,14 @@ func testRemainingLengthSmallPacket(broker string) common.TestResult {
 }
 
 // testRemainingLengthLargePayload tests larger packets with multi-byte remaining length [MQTT-2.2.3]
-func testRemainingLengthLargePayload(broker string) common.TestResult {
+func testRemainingLengthLargePayload(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Remaining Length Large Payload",
 		SpecRef: "MQTT-2.2.3",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-remlen-large"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-remlen-large"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"fmt"
 	"time"
 
@@ -23,7 +27,7 @@ func SessionTests() TestGroup {
 // testSessionExpiry tests session expiry interval [MQTT-3.1.2-23]
 // "The Client and Server MUST store the Session State after the Network
 // Connection is closed if the Session Expiry Interval is greater than 0"
-func testSessionExpiry(broker string) TestResult {
+func testSessionExpiry(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Session Expiry Interval",
@@ -36,7 +40,7 @@ func testSessionExpiry(broker string) TestResult {
 	// 3. Reconnecting and checking if session was persisted
 	// This is complex to test reliably without broker-specific APIs
 
-	client, err := CreateAndConnectClient(broker, "test-session-expiry", nil)
+	client, err := CreateAndConnectClient(cfg, "test-session-expiry", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -51,7 +55,7 @@ func testSessionExpiry(broker string) TestResult {
 }
 
 // testSessionState tests session state persistence [MQTT-4.1.0-1]
-func testSessionState(broker string) TestResult {
+func testSessionState(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Session State Persistence",
@@ -60,7 +64,7 @@ func testSessionState(broker string) TestResult {
 
 	// Session state includes QoS 1 and QoS 2 messages, subscriptions, etc.
 	// Comprehensive testing requires disconnecting and reconnecting
-	client, err := CreateAndConnectClient(broker, "test-session-state", nil)
+	client, err := CreateAndConnectClient(cfg, "test-session-state", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -74,7 +78,7 @@ func testSessionState(broker string) TestResult {
 }
 
 // testSessionPresent tests Session Present flag in CONNACK
-func testSessionPresent(broker string) TestResult {
+func testSessionPresent(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Session Present Flag",
@@ -83,7 +87,7 @@ func testSessionPresent(broker string) TestResult {
 
 	// The Session Present flag is returned in CONNACK
 	// Testing this properly requires Clean Start = false
-	client, err := CreateAndConnectClient(broker, "test-session-present", nil)
+	client, err := CreateAndConnectClient(cfg, "test-session-present", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -100,7 +104,7 @@ func testSessionPresent(broker string) TestResult {
 // "If the ClientID represents a Client already connected to the Server,
 // the Server sends a DISCONNECT packet to the existing Client with Reason Code
 // of 0x8E (Session taken over)"
-func testSessionTakeover(broker string) TestResult {
+func testSessionTakeover(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Session Takeover",
@@ -108,7 +112,7 @@ func testSessionTakeover(broker string) TestResult {
 	}
 
 	// Connect first client
-	client1, err := CreateAndConnectClient(broker, "test-takeover", nil)
+	client1, err := CreateAndConnectClient(cfg, "test-takeover", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -116,7 +120,7 @@ func testSessionTakeover(broker string) TestResult {
 	}
 
 	// Connect second client with same ID - should take over
-	client2, err := CreateAndConnectClient(broker, "test-takeover", nil)
+	client2, err := CreateAndConnectClient(cfg, "test-takeover", nil)
 	if err != nil {
 		client1.Disconnect(&paho.Disconnect{ReasonCode: 0})
 		result.Error = fmt.Errorf("second connect failed: %w", err)

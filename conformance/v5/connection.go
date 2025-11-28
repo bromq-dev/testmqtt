@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"fmt"
 	"time"
 
@@ -24,14 +28,14 @@ func ConnectionTests() TestGroup {
 // testBasicConnect tests basic MQTT connection [MQTT-3.1.0-1]
 // "After a Network Connection is established by a Client to a Server,
 // the first packet sent from the Client to the Server MUST be a CONNECT packet"
-func testBasicConnect(broker string) TestResult {
+func testBasicConnect(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Basic Connect",
 		SpecRef: "MQTT-3.1.0-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-client-basic", nil)
+	client, err := CreateAndConnectClient(cfg, "test-client-basic", nil)
 	if err != nil {
 		result.Error = err
 		result.Duration = time.Since(start)
@@ -48,7 +52,7 @@ func testBasicConnect(broker string) TestResult {
 // testConnectWithClientID tests connection with specific client ID [MQTT-3.1.3-2]
 // "The ClientID MUST be used by Clients and by Servers to identify state
 // that they hold relating to this MQTT Session between the Client and the Server"
-func testConnectWithClientID(broker string) TestResult {
+func testConnectWithClientID(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Connect with Client ID",
@@ -56,7 +60,7 @@ func testConnectWithClientID(broker string) TestResult {
 	}
 
 	clientID := fmt.Sprintf("test-client-%d", time.Now().UnixNano())
-	client, err := CreateAndConnectClient(broker, clientID, nil)
+	client, err := CreateAndConnectClient(cfg, clientID, nil)
 	if err != nil {
 		result.Error = err
 		result.Duration = time.Since(start)
@@ -73,7 +77,7 @@ func testConnectWithClientID(broker string) TestResult {
 // testCleanStart tests clean start behavior [MQTT-3.1.2-4]
 // "If a CONNECT packet is received with Clean Start is set to 1, the Client and Server
 // MUST discard any existing Session and start a new Session"
-func testCleanStart(broker string) TestResult {
+func testCleanStart(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Clean Start",
@@ -81,7 +85,7 @@ func testCleanStart(broker string) TestResult {
 	}
 
 	// First connection with clean start
-	client, err := CreateAndConnectClient(broker, "test-clean-start", nil)
+	client, err := CreateAndConnectClient(cfg, "test-clean-start", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("failed first connect: %w", err)
 		result.Duration = time.Since(start)
@@ -92,7 +96,7 @@ func testCleanStart(broker string) TestResult {
 	time.Sleep(100 * time.Millisecond)
 
 	// Second connection should start fresh
-	client, err = CreateAndConnectClient(broker, "test-clean-start", nil)
+	client, err = CreateAndConnectClient(cfg, "test-clean-start", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("failed second connect: %w", err)
 		result.Duration = time.Since(start)
@@ -109,7 +113,7 @@ func testCleanStart(broker string) TestResult {
 // testDoubleConnect tests that second CONNECT is a protocol error [MQTT-3.1.0-2]
 // "The Server MUST process a second CONNECT packet sent from a Client as a
 // Protocol Error and close the Network Connection"
-func testDoubleConnect(broker string) TestResult {
+func testDoubleConnect(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reject Second CONNECT",
@@ -117,7 +121,7 @@ func testDoubleConnect(broker string) TestResult {
 	}
 
 	// Connect first time
-	client, err := CreateAndConnectClient(broker, "test-double-connect", nil)
+	client, err := CreateAndConnectClient(cfg, "test-double-connect", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -138,7 +142,7 @@ func testDoubleConnect(broker string) TestResult {
 // "If the Protocol Version is not 5 and the Server does not want to accept
 // the CONNECT packet, the Server MAY send a CONNACK packet with Reason Code
 // 0x84 (Unsupported Protocol Version)"
-func testProtocolVersion(broker string) TestResult {
+func testProtocolVersion(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Protocol Version Check",
@@ -149,7 +153,7 @@ func testProtocolVersion(broker string) TestResult {
 	// sends the correct protocol version. Testing wrong protocol versions would
 	// require manually crafting packets at a lower level.
 	// We'll verify that v5 connections work correctly.
-	client, err := CreateAndConnectClient(broker, "test-protocol-version", nil)
+	client, err := CreateAndConnectClient(cfg, "test-protocol-version", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("v5 connect failed: %w", err)
 		result.Duration = time.Since(start)

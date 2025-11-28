@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -31,7 +35,7 @@ func QoSHandshakeTests() TestGroup {
 // testPUBACKPacketIdentifier tests PUBACK packet identifier [MQTT-3.4.2-1]
 // "The Packet Identifier field contains the Packet Identifier from the PUBLISH packet
 // that is being acknowledged"
-func testPUBACKPacketIdentifier(broker string) TestResult {
+func testPUBACKPacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBACK Packet Identifier Matches PUBLISH",
@@ -48,7 +52,7 @@ func testPUBACKPacketIdentifier(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-puback-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-puback-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -68,7 +72,7 @@ func testPUBACKPacketIdentifier(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-puback-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-puback-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -106,14 +110,14 @@ func testPUBACKPacketIdentifier(broker string) TestResult {
 
 // testPUBACKReasonCodes tests PUBACK reason codes [MQTT-3.4.2.1-1]
 // "The Client or Server sending the PUBACK packet MUST use one of the PUBACK Reason Codes"
-func testPUBACKReasonCodes(broker string) TestResult {
+func testPUBACKReasonCodes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBACK Reason Codes",
 		SpecRef: "MQTT-3.4.2.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-puback-reason", nil)
+	client, err := CreateAndConnectClient(cfg, "test-puback-reason", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -144,7 +148,7 @@ func testPUBACKReasonCodes(broker string) TestResult {
 // testPUBRECPacketIdentifier tests PUBREC packet identifier [MQTT-3.5.2-1]
 // "The Packet Identifier field contains the Packet Identifier from the PUBLISH packet
 // that is being acknowledged"
-func testPUBRECPacketIdentifier(broker string) TestResult {
+func testPUBRECPacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBREC Packet Identifier Matches PUBLISH",
@@ -161,7 +165,7 @@ func testPUBRECPacketIdentifier(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-pubrec-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-pubrec-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -181,7 +185,7 @@ func testPUBRECPacketIdentifier(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pubrec-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pubrec-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -218,14 +222,14 @@ func testPUBRECPacketIdentifier(broker string) TestResult {
 }
 
 // testPUBRECReasonCodes tests PUBREC reason codes [MQTT-3.5.2.1-1]
-func testPUBRECReasonCodes(broker string) TestResult {
+func testPUBRECReasonCodes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBREC Reason Codes",
 		SpecRef: "MQTT-3.5.2.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-pubrec-reason", nil)
+	client, err := CreateAndConnectClient(cfg, "test-pubrec-reason", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -256,7 +260,7 @@ func testPUBRECReasonCodes(broker string) TestResult {
 // testPUBRELPacketIdentifier tests PUBREL packet identifier [MQTT-3.6.2-1]
 // "The Packet Identifier field contains the Packet Identifier from the PUBREC packet
 // that is being acknowledged"
-func testPUBRELPacketIdentifier(broker string) TestResult {
+func testPUBRELPacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBREL Packet Identifier Matches PUBREC",
@@ -273,7 +277,7 @@ func testPUBRELPacketIdentifier(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-pubrel-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-pubrel-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -293,7 +297,7 @@ func testPUBRELPacketIdentifier(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pubrel-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pubrel-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -330,7 +334,7 @@ func testPUBRELPacketIdentifier(broker string) TestResult {
 }
 
 // testPUBRELReasonCodes tests PUBREL reason codes [MQTT-3.6.2.1-1]
-func testPUBRELReasonCodes(broker string) TestResult {
+func testPUBRELReasonCodes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBREL Reason Codes",
@@ -338,7 +342,7 @@ func testPUBRELReasonCodes(broker string) TestResult {
 	}
 
 	// Test that PUBREL is sent with proper reason code during QoS 2 flow
-	client, err := CreateAndConnectClient(broker, "test-pubrel-reason", nil)
+	client, err := CreateAndConnectClient(cfg, "test-pubrel-reason", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -369,7 +373,7 @@ func testPUBRELReasonCodes(broker string) TestResult {
 // testPUBCOMPPacketIdentifier tests PUBCOMP packet identifier [MQTT-3.7.2-1]
 // "The Packet Identifier field contains the Packet Identifier from the PUBREL packet
 // that is being acknowledged"
-func testPUBCOMPPacketIdentifier(broker string) TestResult {
+func testPUBCOMPPacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBCOMP Packet Identifier Matches PUBREL",
@@ -386,7 +390,7 @@ func testPUBCOMPPacketIdentifier(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-pubcomp-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-pubcomp-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -406,7 +410,7 @@ func testPUBCOMPPacketIdentifier(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-pubcomp-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-pubcomp-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -443,14 +447,14 @@ func testPUBCOMPPacketIdentifier(broker string) TestResult {
 }
 
 // testPUBCOMPReasonCodes tests PUBCOMP reason codes [MQTT-3.7.2.1-1]
-func testPUBCOMPReasonCodes(broker string) TestResult {
+func testPUBCOMPReasonCodes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PUBCOMP Reason Codes",
 		SpecRef: "MQTT-3.7.2.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-pubcomp-reason", nil)
+	client, err := CreateAndConnectClient(cfg, "test-pubcomp-reason", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -481,7 +485,7 @@ func testPUBCOMPReasonCodes(broker string) TestResult {
 // testQoS2CompleteHandshake tests complete QoS 2 handshake [MQTT-4.3.3-1]
 // "The receiver MUST respond to a PUBREL packet by sending a PUBCOMP packet
 // containing the same Packet Identifier as the PUBREL"
-func testQoS2CompleteHandshake(broker string) TestResult {
+func testQoS2CompleteHandshake(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "QoS 2 Complete Handshake (PUBLISH->PUBREC->PUBREL->PUBCOMP)",
@@ -498,7 +502,7 @@ func testQoS2CompleteHandshake(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-qos2-handshake-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-qos2-handshake-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -518,7 +522,7 @@ func testQoS2CompleteHandshake(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-qos2-handshake-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-qos2-handshake-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -557,7 +561,7 @@ func testQoS2CompleteHandshake(broker string) TestResult {
 // testQoS1DuplicateHandling tests DUP flag in QoS 1 retransmissions [MQTT-3.3.1-1]
 // "If the DUP flag is set to 0, it indicates that this is the first occasion
 // that the Client or Server has attempted to send this PUBLISH packet"
-func testQoS1DuplicateHandling(broker string) TestResult {
+func testQoS1DuplicateHandling(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "QoS 1 DUP Flag Handling",
@@ -574,7 +578,7 @@ func testQoS1DuplicateHandling(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-dup-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-dup-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -594,7 +598,7 @@ func testQoS1DuplicateHandling(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-dup-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-dup-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)

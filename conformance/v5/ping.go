@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"fmt"
 	"net"
 	"net/url"
@@ -24,14 +28,14 @@ func PingTests() TestGroup {
 
 // testPingRequest tests that PINGREQ packet works [MQTT-3.12.4-1]
 // "The Server MUST send a PINGRESP packet in response to a PINGREQ packet"
-func testPingRequest(broker string) TestResult {
+func testPingRequest(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PINGREQ Generates PINGRESP",
 		SpecRef: "MQTT-3.12.4-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -114,14 +118,14 @@ func testPingRequest(broker string) TestResult {
 
 // testPingResponse tests PINGRESP format [MQTT-3.13.2-1]
 // "The Server MUST send a PINGRESP packet with Remaining Length 0"
-func testPingResponse(broker string) TestResult {
+func testPingResponse(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PINGRESP Has Remaining Length 0",
 		SpecRef: "MQTT-3.13.2-1",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -206,14 +210,14 @@ func testPingResponse(broker string) TestResult {
 // "If the Keep Alive value is non-zero and the Server does not receive an MQTT
 // Control Packet from the Client within 1.5 times the Keep Alive time period,
 // it MUST close the Network Connection"
-func testKeepAliveTimeout(broker string) TestResult {
+func testKeepAliveTimeout(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Keep Alive Timeout (1.5x)",
 		SpecRef: "MQTT-3.1.2-24",
 	}
 
-	u, err := url.Parse(broker)
+	u, err := url.Parse(cfg.Broker)
 	if err != nil {
 		result.Error = fmt.Errorf("invalid broker URL: %w", err)
 		result.Duration = time.Since(start)
@@ -287,7 +291,7 @@ func testKeepAliveTimeout(broker string) TestResult {
 
 // testPingNoPayload tests that PINGREQ has no payload [MQTT-3.12.3-1]
 // "The PINGREQ packet has no Variable Header and no Payload"
-func testPingNoPayload(broker string) TestResult {
+func testPingNoPayload(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "PINGREQ Has No Payload",
@@ -295,7 +299,7 @@ func testPingNoPayload(broker string) TestResult {
 	}
 
 	// Test by using paho client which correctly implements PINGREQ
-	client, err := CreateAndConnectClient(broker, "test-ping-nopayload", nil)
+	client, err := CreateAndConnectClient(cfg, "test-ping-nopayload", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

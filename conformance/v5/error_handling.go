@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -27,14 +31,14 @@ func ErrorHandlingTests() TestGroup {
 }
 
 // testDuplicatePacketIdentifier tests handling of duplicate packet identifiers
-func testDuplicatePacketIdentifier(broker string) TestResult {
+func testDuplicatePacketIdentifier(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Duplicate Packet Identifier Handling",
 		SpecRef: "MQTT-2.2.1-3",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-dup-pkt-id", nil)
+	client, err := CreateAndConnectClient(cfg, "test-dup-pkt-id", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -65,14 +69,14 @@ func testDuplicatePacketIdentifier(broker string) TestResult {
 }
 
 // testPacketIdentifierExhaustion tests behavior when packet IDs are exhausted
-func testPacketIdentifierExhaustion(broker string) TestResult {
+func testPacketIdentifierExhaustion(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Packet Identifier Exhaustion Handling",
 		SpecRef: "MQTT-2.2.1-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-pkt-id-exhaustion", nil)
+	client, err := CreateAndConnectClient(cfg, "test-pkt-id-exhaustion", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -108,14 +112,14 @@ func testPacketIdentifierExhaustion(broker string) TestResult {
 }
 
 // testPublishToInvalidTopic tests publishing to invalid topic names
-func testPublishToInvalidTopic(broker string) TestResult {
+func testPublishToInvalidTopic(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Publish to Invalid Topic Rejection",
 		SpecRef: "MQTT-4.7.3-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-invalid-pub-topic", nil)
+	client, err := CreateAndConnectClient(cfg, "test-invalid-pub-topic", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -140,14 +144,14 @@ func testPublishToInvalidTopic(broker string) TestResult {
 }
 
 // testSubscribeToInvalidFilter tests subscribing to invalid topic filters
-func testSubscribeToInvalidFilter(broker string) TestResult {
+func testSubscribeToInvalidFilter(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Subscribe to Invalid Topic Filter",
 		SpecRef: "MQTT-4.7.1-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-invalid-sub-filter", nil)
+	client, err := CreateAndConnectClient(cfg, "test-invalid-sub-filter", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -179,14 +183,14 @@ func testSubscribeToInvalidFilter(broker string) TestResult {
 }
 
 // testDisconnectDuringPublish tests disconnect during ongoing publish operations
-func testDisconnectDuringPublish(broker string) TestResult {
+func testDisconnectDuringPublish(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Disconnect During Active Publish",
 		SpecRef: "MQTT-3.14.4-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-disconnect-during-pub", nil)
+	client, err := CreateAndConnectClient(cfg, "test-disconnect-during-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -216,7 +220,7 @@ func testDisconnectDuringPublish(broker string) TestResult {
 }
 
 // testReconnectAfterDisconnect tests reconnecting after clean disconnect
-func testReconnectAfterDisconnect(broker string) TestResult {
+func testReconnectAfterDisconnect(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Reconnect After Clean Disconnect",
@@ -224,7 +228,7 @@ func testReconnectAfterDisconnect(broker string) TestResult {
 	}
 
 	// First connection
-	client1, err := CreateAndConnectClient(broker, "test-reconnect", nil)
+	client1, err := CreateAndConnectClient(cfg, "test-reconnect", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -236,7 +240,7 @@ func testReconnectAfterDisconnect(broker string) TestResult {
 	time.Sleep(200 * time.Millisecond)
 
 	// Reconnect with same client ID
-	client2, err := CreateAndConnectClient(broker, "test-reconnect", nil)
+	client2, err := CreateAndConnectClient(cfg, "test-reconnect", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("reconnect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -250,14 +254,14 @@ func testReconnectAfterDisconnect(broker string) TestResult {
 }
 
 // testConcurrentPublishes tests concurrent publish operations
-func testConcurrentPublishes(broker string) TestResult {
+func testConcurrentPublishes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Concurrent Publish Operations",
 		SpecRef: "MQTT-4.3.0-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-concurrent-pub", nil)
+	client, err := CreateAndConnectClient(cfg, "test-concurrent-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -308,14 +312,14 @@ func testConcurrentPublishes(broker string) TestResult {
 }
 
 // testConcurrentSubscribes tests concurrent subscribe operations
-func testConcurrentSubscribes(broker string) TestResult {
+func testConcurrentSubscribes(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Concurrent Subscribe Operations",
 		SpecRef: "MQTT-3.8.0-1",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-concurrent-sub", nil)
+	client, err := CreateAndConnectClient(cfg, "test-concurrent-sub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

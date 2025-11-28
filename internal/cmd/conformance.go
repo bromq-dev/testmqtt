@@ -8,10 +8,12 @@ import (
 )
 
 var (
-	cfVersion string
-	cfBroker  string
-	cfTests   string
-	cfVerbose bool
+	cfVersion  string
+	cfBroker   string
+	cfTests    string
+	cfVerbose  bool
+	cfUsername string
+	cfPassword string
 )
 
 var conformanceCmd = &cobra.Command{
@@ -27,14 +29,16 @@ func init() {
 	conformanceCmd.Flags().StringVarP(&cfBroker, "broker", "b", "tcp://localhost:1883", "Broker URL")
 	conformanceCmd.Flags().StringVarP(&cfTests, "tests", "t", "all", "Tests to run (all, or comma-separated list)")
 	conformanceCmd.Flags().BoolVar(&cfVerbose, "verbose", false, "Enable verbose output with detailed failure information")
+	conformanceCmd.Flags().StringVarP(&cfUsername, "username", "u", "", "MQTT username")
+	conformanceCmd.Flags().StringVarP(&cfPassword, "password", "p", "", "MQTT password")
 }
 
 func runConformance(cmd *cobra.Command, args []string) error {
 	switch cfVersion {
 	case "5":
-		return conformance.RunV5Tests(cfBroker, cfTests, cfVerbose)
+		return conformance.RunV5Tests(cfBroker, cfUsername, cfPassword, cfTests, cfVerbose)
 	case "3":
-		return conformance.RunV3Tests(cfBroker, cfTests, cfVerbose)
+		return conformance.RunV3Tests(cfBroker, cfUsername, cfPassword, cfTests, cfVerbose)
 	default:
 		return fmt.Errorf("unsupported MQTT version: %s (supported: 3, 5)", cfVersion)
 	}

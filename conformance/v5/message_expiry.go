@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"context"
 	"fmt"
 	"sync"
@@ -24,7 +28,7 @@ func MessageExpiryTests() TestGroup {
 
 // testMessageExpiryBasic tests basic message expiry [MQTT-3.3.2.3.3-1]
 // "If present, the Four Byte value is the lifetime of the Application Message in seconds"
-func testMessageExpiryBasic(broker string) TestResult {
+func testMessageExpiryBasic(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Message Expiry Interval Basic",
@@ -41,7 +45,7 @@ func testMessageExpiryBasic(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-expiry-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-expiry-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -61,7 +65,7 @@ func testMessageExpiryBasic(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-expiry-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-expiry-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -106,7 +110,7 @@ func testMessageExpiryBasic(broker string) TestResult {
 // testMessageExpiryCountdown tests expiry countdown [MQTT-3.3.2.3.3-2]
 // "The Message Expiry Interval MUST be set to the received value minus the time
 // that the Application Message has been waiting in the Server"
-func testMessageExpiryCountdown(broker string) TestResult {
+func testMessageExpiryCountdown(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Message Expiry Interval Countdown",
@@ -129,7 +133,7 @@ func testMessageExpiryCountdown(broker string) TestResult {
 
 	// First publish a RETAINED message with expiry
 	// This ensures the message stays on the broker while we wait
-	pub, err := CreateAndConnectClient(broker, "test-expiry-countdown-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-expiry-countdown-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -159,7 +163,7 @@ func testMessageExpiryCountdown(broker string) TestResult {
 	time.Sleep(2 * time.Second)
 
 	// Now subscribe - should receive retained message with reduced expiry
-	sub, err := CreateAndConnectClient(broker, "test-expiry-countdown-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-expiry-countdown-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -203,7 +207,7 @@ func testMessageExpiryCountdown(broker string) TestResult {
 
 // testMessageExpiryZeroMeansNoExpiry tests that absent expiry means no expiry [MQTT-3.3.2.3.3-3]
 // "If the Message Expiry Interval is absent, the Application Message does not expire"
-func testMessageExpiryZeroMeansNoExpiry(broker string) TestResult {
+func testMessageExpiryZeroMeansNoExpiry(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Absent Message Expiry Means No Expiry",
@@ -220,7 +224,7 @@ func testMessageExpiryZeroMeansNoExpiry(broker string) TestResult {
 		return true, nil
 	}
 
-	sub, err := CreateAndConnectClient(broker, "test-expiry-none-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-expiry-none-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -240,7 +244,7 @@ func testMessageExpiryZeroMeansNoExpiry(broker string) TestResult {
 		return result
 	}
 
-	pub, err := CreateAndConnectClient(broker, "test-expiry-none-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-expiry-none-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -282,7 +286,7 @@ func testMessageExpiryZeroMeansNoExpiry(broker string) TestResult {
 // testMessageExpiryRetainedMessage tests expiry with retained messages [MQTT-3.3.2.3.3-4]
 // "The PUBLISH packet sent to a Client by the Server MUST contain a Message Expiry Interval
 // set to the received value minus the time that the message has been waiting in the Server"
-func testMessageExpiryRetainedMessage(broker string) TestResult {
+func testMessageExpiryRetainedMessage(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "Message Expiry With Retained Messages",
@@ -290,7 +294,7 @@ func testMessageExpiryRetainedMessage(broker string) TestResult {
 	}
 
 	// Publish retained message with expiry
-	pub, err := CreateAndConnectClient(broker, "test-expiry-retained-pub", nil)
+	pub, err := CreateAndConnectClient(cfg, "test-expiry-retained-pub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("publisher connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -329,7 +333,7 @@ func testMessageExpiryRetainedMessage(broker string) TestResult {
 	}
 
 	// Subscribe to get retained message
-	sub, err := CreateAndConnectClient(broker, "test-expiry-retained-sub", onPublish)
+	sub, err := CreateAndConnectClient(cfg, "test-expiry-retained-sub", onPublish)
 	if err != nil {
 		result.Error = fmt.Errorf("subscriber connect failed: %w", err)
 		result.Duration = time.Since(start)

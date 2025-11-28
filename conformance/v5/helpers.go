@@ -10,8 +10,8 @@ import (
 )
 
 // CreateAndConnectClient creates and connects a MQTT v5 client with optional message handler
-func CreateAndConnectClient(broker, clientID string, onPublish func(paho.PublishReceived) (bool, error)) (*paho.Client, error) {
-	conn, err := common.DialBroker(broker)
+func CreateAndConnectClient(cfg common.Config, clientID string, onPublish func(paho.PublishReceived) (bool, error)) (*paho.Client, error) {
+	conn, err := common.DialBroker(cfg.Broker)
 	if err != nil {
 		return nil, err
 	}
@@ -36,6 +36,15 @@ func CreateAndConnectClient(broker, clientID string, onPublish func(paho.Publish
 		CleanStart: true,
 	}
 
+	if cfg.Username != "" {
+		cp.UsernameFlag = true
+		cp.Username = cfg.Username
+	}
+	if cfg.Password != "" {
+		cp.PasswordFlag = true
+		cp.Password = []byte(cfg.Password)
+	}
+
 	_, err = client.Connect(ctx, cp)
 	if err != nil {
 		conn.Close()
@@ -46,8 +55,8 @@ func CreateAndConnectClient(broker, clientID string, onPublish func(paho.Publish
 }
 
 // CreateAndConnectClientWithSession creates and connects a MQTT v5 client with session control
-func CreateAndConnectClientWithSession(broker, clientID string, cleanStart bool, onPublish func(paho.PublishReceived) (bool, error)) (*paho.Client, error) {
-	conn, err := common.DialBroker(broker)
+func CreateAndConnectClientWithSession(cfg common.Config, clientID string, cleanStart bool, onPublish func(paho.PublishReceived) (bool, error)) (*paho.Client, error) {
+	conn, err := common.DialBroker(cfg.Broker)
 	if err != nil {
 		return nil, err
 	}
@@ -78,6 +87,15 @@ func CreateAndConnectClientWithSession(broker, clientID string, cleanStart bool,
 		cp.Properties = &paho.ConnectProperties{
 			SessionExpiryInterval: &sessionExpiry,
 		}
+	}
+
+	if cfg.Username != "" {
+		cp.UsernameFlag = true
+		cp.Username = cfg.Username
+	}
+	if cfg.Password != "" {
+		cp.PasswordFlag = true
+		cp.Password = []byte(cfg.Password)
 	}
 
 	_, err = client.Connect(ctx, cp)

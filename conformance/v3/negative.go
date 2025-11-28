@@ -25,14 +25,14 @@ func NegativeTests() common.TestGroup {
 }
 
 // testPublishWithWildcardTopic tests PUBLISH with wildcards in topic is invalid [MQTT-3.3.2-2]
-func testPublishWithWildcardTopic(broker string) common.TestResult {
+func testPublishWithWildcardTopic(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "PUBLISH with Wildcard Topic (Invalid)",
 		SpecRef: "MQTT-3.3.2-2",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-pub-wildcard"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-pub-wildcard"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -53,14 +53,14 @@ func testPublishWithWildcardTopic(broker string) common.TestResult {
 }
 
 // testInvalidQoS tests QoS value of 3 is invalid [MQTT-3.3.1-4]
-func testInvalidQoS(broker string) common.TestResult {
+func testInvalidQoS(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Invalid QoS 3",
 		SpecRef: "MQTT-3.3.1-4",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-invalid-qos"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-invalid-qos"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -82,7 +82,7 @@ func testInvalidQoS(broker string) common.TestResult {
 }
 
 // testSecondConnectPacket tests second CONNECT packet causes disconnect [MQTT-3.1.0-2]
-func testSecondConnectPacket(broker string) common.TestResult {
+func testSecondConnectPacket(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Second CONNECT Packet (Protocol Violation)",
@@ -91,7 +91,7 @@ func testSecondConnectPacket(broker string) common.TestResult {
 
 	// The paho.mqtt.golang library prevents sending a second CONNECT packet
 	// This test verifies that the library behaves correctly
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-second-connect"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-second-connect"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -110,14 +110,14 @@ func testSecondConnectPacket(broker string) common.TestResult {
 }
 
 // testEmptySubscribe tests SUBSCRIBE with no payload is invalid [MQTT-3.8.3-3]
-func testEmptySubscribe(broker string) common.TestResult {
+func testEmptySubscribe(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Empty SUBSCRIBE (Invalid)",
 		SpecRef: "MQTT-3.8.3-3",
 	}
 
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-empty-sub"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-empty-sub"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -135,7 +135,7 @@ func testEmptySubscribe(broker string) common.TestResult {
 }
 
 // testInvalidProtocolName tests invalid protocol name is rejected [MQTT-3.1.2-1]
-func testInvalidProtocolName(broker string) common.TestResult {
+func testInvalidProtocolName(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Invalid Protocol Name",
@@ -152,7 +152,7 @@ func testInvalidProtocolName(broker string) common.TestResult {
 }
 
 // testInvalidProtocolLevel tests unsupported protocol level [MQTT-3.1.2-2]
-func testInvalidProtocolLevel(broker string) common.TestResult {
+func testInvalidProtocolLevel(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Invalid Protocol Level",
@@ -161,7 +161,7 @@ func testInvalidProtocolLevel(broker string) common.TestResult {
 
 	clientID := common.GenerateClientID("test-proto-level")
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker(broker)
+	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(clientID)
 	opts.SetProtocolVersion(3) // MQTT 3.1 (not 3.1.1)
 	opts.SetCleanSession(true)
@@ -184,7 +184,7 @@ func testInvalidProtocolLevel(broker string) common.TestResult {
 }
 
 // testReservedFlagViolation tests reserved flags must be as specified [MQTT-3.1.2-3]
-func testReservedFlagViolation(broker string) common.TestResult {
+func testReservedFlagViolation(cfg common.Config) common.TestResult {
 	start := time.Now()
 	result := common.TestResult{
 		Name:    "Reserved Flag Validation",
@@ -194,7 +194,7 @@ func testReservedFlagViolation(broker string) common.TestResult {
 	// The paho.mqtt.golang library sets reserved flags correctly
 	// We can't easily violate this without raw packet manipulation
 	// Test documents the requirement
-	client, err := CreateAndConnectClient(broker, common.GenerateClientID("test-reserved"), nil)
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("test-reserved"), nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

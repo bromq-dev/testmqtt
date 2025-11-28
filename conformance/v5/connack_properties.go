@@ -1,6 +1,10 @@
 package v5
 
 import (
+	"github.com/bromq-dev/testmqtt/conformance/common"
+)
+
+import (
 	"fmt"
 	"time"
 
@@ -29,7 +33,7 @@ func CONNACKPropertiesTests() TestGroup {
 // testCONNACKSessionPresent tests Session Present flag [MQTT-3.2.2.1.1]
 // "If the Server accepts a connection with Clean Start set to 0, the Session Present
 // flag indicates whether the Client is resuming an existing Session"
-func testCONNACKSessionPresent(broker string) TestResult {
+func testCONNACKSessionPresent(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Session Present Flag",
@@ -37,7 +41,7 @@ func testCONNACKSessionPresent(broker string) TestResult {
 	}
 
 	// First connection with clean start - Session Present should be 0
-	client1, err := CreateAndConnectClient(broker, "test-connack-session-present", nil)
+	client1, err := CreateAndConnectClient(cfg, "test-connack-session-present", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("first connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -49,7 +53,7 @@ func testCONNACKSessionPresent(broker string) TestResult {
 
 	// Second connection without clean start - Session Present may be 1 if broker persists session
 	// This test just verifies the connection works - actual Session Present value depends on broker config
-	client2, err := CreateAndConnectClient(broker, "test-connack-session-present", nil)
+	client2, err := CreateAndConnectClient(cfg, "test-connack-session-present", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("second connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -63,14 +67,14 @@ func testCONNACKSessionPresent(broker string) TestResult {
 }
 
 // testCONNACKSessionExpiryInterval tests Session Expiry Interval in CONNACK [MQTT-3.2.2.3.2]
-func testCONNACKSessionExpiryInterval(broker string) TestResult {
+func testCONNACKSessionExpiryInterval(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Session Expiry Interval Property",
 		SpecRef: "MQTT-3.2.2.3.2",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-expiry", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-expiry", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -85,14 +89,14 @@ func testCONNACKSessionExpiryInterval(broker string) TestResult {
 }
 
 // testCONNACKReceiveMaximum tests Receive Maximum property [MQTT-3.2.2.3.3]
-func testCONNACKReceiveMaximum(broker string) TestResult {
+func testCONNACKReceiveMaximum(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Receive Maximum Property",
 		SpecRef: "MQTT-3.2.2.3.3",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-receive-max", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-receive-max", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -108,14 +112,14 @@ func testCONNACKReceiveMaximum(broker string) TestResult {
 }
 
 // testCONNACKMaximumQoS tests Maximum QoS property [MQTT-3.2.2.3.4]
-func testCONNACKMaximumQoS(broker string) TestResult {
+func testCONNACKMaximumQoS(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Maximum QoS Property",
 		SpecRef: "MQTT-3.2.2.3.4",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-max-qos", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-max-qos", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -131,14 +135,14 @@ func testCONNACKMaximumQoS(broker string) TestResult {
 }
 
 // testCONNACKRetainAvailable tests Retain Available property [MQTT-3.2.2.3.5]
-func testCONNACKRetainAvailable(broker string) TestResult {
+func testCONNACKRetainAvailable(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Retain Available Property",
 		SpecRef: "MQTT-3.2.2.3.5",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-retain", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-retain", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -154,14 +158,14 @@ func testCONNACKRetainAvailable(broker string) TestResult {
 }
 
 // testCONNACKMaximumPacketSize tests Maximum Packet Size property [MQTT-3.2.2.3.6]
-func testCONNACKMaximumPacketSize(broker string) TestResult {
+func testCONNACKMaximumPacketSize(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Maximum Packet Size Property",
 		SpecRef: "MQTT-3.2.2.3.6",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-packet-size", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-packet-size", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -177,14 +181,14 @@ func testCONNACKMaximumPacketSize(broker string) TestResult {
 }
 
 // testCONNACKTopicAliasMaximum tests Topic Alias Maximum property [MQTT-3.2.2.3.8]
-func testCONNACKTopicAliasMaximum(broker string) TestResult {
+func testCONNACKTopicAliasMaximum(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Topic Alias Maximum Property",
 		SpecRef: "MQTT-3.2.2.3.8",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-topic-alias", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-topic-alias", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -200,14 +204,14 @@ func testCONNACKTopicAliasMaximum(broker string) TestResult {
 }
 
 // testCONNACKWildcardSubscriptionAvailable tests Wildcard Subscription Available [MQTT-3.2.2.3.11]
-func testCONNACKWildcardSubscriptionAvailable(broker string) TestResult {
+func testCONNACKWildcardSubscriptionAvailable(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Wildcard Subscription Available Property",
 		SpecRef: "MQTT-3.2.2.3.11",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-wildcard", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-wildcard", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -223,14 +227,14 @@ func testCONNACKWildcardSubscriptionAvailable(broker string) TestResult {
 }
 
 // testCONNACKSubscriptionIdentifierAvailable tests Subscription Identifier Available [MQTT-3.2.2.3.12]
-func testCONNACKSubscriptionIdentifierAvailable(broker string) TestResult {
+func testCONNACKSubscriptionIdentifierAvailable(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Subscription Identifier Available Property",
 		SpecRef: "MQTT-3.2.2.3.12",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-sub-id", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-sub-id", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)
@@ -246,14 +250,14 @@ func testCONNACKSubscriptionIdentifierAvailable(broker string) TestResult {
 }
 
 // testCONNACKSharedSubscriptionAvailable tests Shared Subscription Available [MQTT-3.2.2.3.13]
-func testCONNACKSharedSubscriptionAvailable(broker string) TestResult {
+func testCONNACKSharedSubscriptionAvailable(cfg common.Config) TestResult {
 	start := time.Now()
 	result := TestResult{
 		Name:    "CONNACK Shared Subscription Available Property",
 		SpecRef: "MQTT-3.2.2.3.13",
 	}
 
-	client, err := CreateAndConnectClient(broker, "test-connack-shared-sub", nil)
+	client, err := CreateAndConnectClient(cfg, "test-connack-shared-sub", nil)
 	if err != nil {
 		result.Error = fmt.Errorf("connect failed: %w", err)
 		result.Duration = time.Since(start)

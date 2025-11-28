@@ -9,6 +9,30 @@ import (
 	"github.com/eclipse/paho.golang/paho"
 )
 
+// CheckConnection performs a preflight check to verify broker connectivity and authentication
+func CheckConnection(cfg common.Config) error {
+	// First check TCP reachability
+	if err := common.CheckBrokerReachable(cfg.Broker); err != nil {
+		return fmt.Errorf("broker not reachable: %w", err)
+	}
+
+	// Now try an actual MQTT connection with auth
+	client, err := CreateAndConnectClient(cfg, common.GenerateClientID("preflight"), nil)
+	if err != nil {
+		if cfg.Username != "" {
+			return fmt.Errorf("MQTT connection failed (check credentials): %w", err)
+		}
+		return fmt.Errorf("MQTT connection failed: %w", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	client.Disconnect(&paho.Disconnect{ReasonCode: 0})
+	<-ctx.Done()
+
+	return nil
+}
+
 // CreateAndConnectClient creates and connects a MQTT v5 client with optional message handler
 func CreateAndConnectClient(cfg common.Config, clientID string, onPublish func(paho.PublishReceived) (bool, error)) (*paho.Client, error) {
 	conn, err := common.DialBroker(cfg.Broker)

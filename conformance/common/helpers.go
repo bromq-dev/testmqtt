@@ -58,3 +58,13 @@ func DialBroker(broker string) (net.Conn, error) {
 
 	return conn, nil
 }
+
+// CheckBrokerReachable verifies the broker is reachable at the TCP level
+func CheckBrokerReachable(broker string) error {
+	conn, err := DialBroker(broker)
+	if err != nil {
+		return err
+	}
+	conn.Close()
+	return nil
+}

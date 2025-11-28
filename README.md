@@ -10,41 +10,41 @@ A comprehensive MQTT broker testing tool built in Go.
 - **Performance Benchmarking**: One-off performance measurements
 - **Stress Testing**: Load testing with configurable publishers, subscribers, and duration
 
-## Quick Start
-
-### Build
+## Installation
 
 ```bash
-go build -o bin/testmqtt .
+go install github.com/bromq-dev/testmqtt@latest
 ```
+
+## Quick Start
 
 ### Run Conformance Tests
 
 ```bash
 # MQTT v3.1.1 conformance tests (77 tests)
-./bin/testmqtt conformance --version 3 --broker tcp://localhost:1883
+testmqtt conformance --version 3 --broker tcp://localhost:1883
 
 # MQTT v5.0 conformance tests (139 tests)
-./bin/testmqtt conformance --version 5 --broker tcp://localhost:1883
+testmqtt conformance --version 5 --broker tcp://localhost:1883
 
 # Run specific test groups
-./bin/testmqtt conformance --version 3 --broker tcp://localhost:1883 --tests Connection,QoS
+testmqtt conformance --version 3 --broker tcp://localhost:1883 --tests Connection,QoS
 
 # Verbose output with detailed failure information
-./bin/testmqtt conformance --version 3 --broker tcp://localhost:1883 --verbose
+testmqtt conformance --version 3 --broker tcp://localhost:1883 --verbose
 ```
 
 ### Performance Testing
 
 ```bash
 # Stress test
-./bin/testmqtt performance stress --broker tcp://localhost:1883 --duration 60s --publishers 100 --subscribers 10 --topics 10 --qos 1
+testmqtt performance stress --broker tcp://localhost:1883 --duration 60s --publishers 100 --subscribers 10 --topics 10 --qos 1
 
 # One-off benchmark
-./bin/testmqtt performance bench --broker tcp://localhost:1883 --messages 10000 --payload-size 256 --qos 0
+testmqtt performance bench --broker tcp://localhost:1883 --messages 10000 --payload-size 256 --qos 0
 
 # Multiple rounds with increasing load
-./bin/testmqtt performance round --broker tcp://localhost:1883 --rounds 10 --increment 100
+testmqtt performance round --broker tcp://localhost:1883 --rounds 10 --increment 100
 ```
 
 ### Test with Local Broker
@@ -54,7 +54,7 @@ go build -o bin/testmqtt .
 docker compose up -d
 
 # Run tests
-./bin/testmqtt conformance --version 3 --broker tcp://localhost:1883
+testmqtt conformance --version 3 --broker tcp://localhost:1883
 
 # Stop broker
 docker compose down
@@ -101,6 +101,12 @@ testmqtt/
 │   └── v5/                # MQTT v5.0 tests (139 tests)
 ├── performance/           # Performance testing (TODO)
 └── spec/                  # MQTT specifications (v3.1.1 & v5.0)
+```
+
+## Building from Source
+
+```bash
+go build -o bin/testmqtt .
 ```
 
 ## Technologies Used

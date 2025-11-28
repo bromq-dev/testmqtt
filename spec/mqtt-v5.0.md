@@ -150,7 +150,7 @@ Figure 1‑2 UTF-8 Encoded String non-normative example
 |         | 0                        | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 2  | String Length LSB (0x05) |       |       |       |       |       |       |       |
 |         | 0                        | 0     | 0     | 0     | 0     | 1     | 0     | 1     |
-| byte 3  | ‘A’ (0x41)               |       |       |       |       |       |       |       |
+| byte 3  | `A` (0x41)               |       |       |       |       |       |       |       |
 |         | 0                        | 1     | 0     | 0     | 0     | 0     | 0     | 1     |
 | byte 4  | (0xF0)                   |       |       |       |       |       |       |       |
 |         | 1                        | 1     | 1     | 1     | 0     | 0     | 0     | 0     |
@@ -325,7 +325,7 @@ Table 2‑1 MQTT Control Packet types
 
 ### 2.1.3 Flags
 
-The remaining bits \[3-0\] of byte 1 in the Fixed Header contain flags specific to each MQTT Control Packet type as shown below. Where a flag bit is marked as “Reserved”, it is reserved for future use and MUST be set to the value listed \[MQTT-2.1.3-1\]. If invalid flags are received it is a Malformed Packet. Refer to [section 4.13](#S4_13_Errors) for details about handling errors.
+The remaining bits \[3-0\] of byte 1 in the Fixed Header contain flags specific to each MQTT Control Packet type as shown below. Where a flag bit is marked as `Reserved`, it is reserved for future use and MUST be set to the value listed \[MQTT-2.1.3-1\]. If invalid flags are received it is a Malformed Packet. Refer to [section 4.13](#S4_13_Errors) for details about handling errors.
 
 Table 2‑2 Flag Bits
 
@@ -601,12 +601,12 @@ Figure 3‑2 - Protocol Name bytes
 | Protocol Name |                 |       |       |       |       |       |       |       |       |
 | byte 1        | Length MSB (0)  | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 2        | Length LSB (4)  | 0     | 0     | 0     | 0     | 0     | 1     | 0     | 0     |
-| byte 3        | ‘M’             | 0     | 1     | 0     | 0     | 1     | 1     | 0     | 1     |
-| byte 4        | ‘Q’             | 0     | 1     | 0     | 1     | 0     | 0     | 0     | 1     |
-| byte 5        | ‘T’             | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
-| byte 6        | ‘T’             | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
+| byte 3        | `M`             | 0     | 1     | 0     | 0     | 1     | 1     | 0     | 1     |
+| byte 4        | `Q`             | 0     | 1     | 0     | 1     | 0     | 0     | 0     | 1     |
+| byte 5        | `T`             | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
+| byte 6        | `T`             | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
 
-The Protocol Name is a UTF-8 Encoded String that represents the protocol name “MQTT”, capitalized as shown. The string, its offset and length will not be changed by future versions of the MQTT specification.
+The Protocol Name is a UTF-8 Encoded String that represents the protocol name `MQTT`, capitalized as shown. The string, its offset and length will not be changed by future versions of the MQTT specification.
 
 A Server which support multiple protocols uses the Protocol Name to determine whether the data is MQTT. The protocol name MUST be the UTF-8 String "MQTT". If the Server does not want to accept the CONNECT, and wishes to reveal that it is an MQTT Server it MAY send a CONNACK packet with Reason Code of 0x84 (Unsupported Protocol Version), and then it MUST close the Network Connection \[MQTT-3.1.2-1\].
 
@@ -823,7 +823,7 @@ In the case of a Shared Subscription where the message is too large to send to o
 
 **Non-normative comment**
 
-Where a packet is discarded without being sent, the Server could place the discarded packet on a ‘dead letter queue’ or perform other diagnostic action. Such actions are outside the scope of this specification.
+Where a packet is discarded without being sent, the Server could place the discarded packet on a `dead letter queue` or perform other diagnostic action. Such actions are outside the scope of this specification.
 
 ##### 3.1.2.11.5 Topic Alias Maximum
 
@@ -899,10 +899,10 @@ Figure 3‑6 - Variable Header example
 | Protocol Name    |                                                                                                                                                          |       |       |       |       |       |       |       |       |
 | byte 1           | Length MSB (0)                                                                                                                                           | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 2           | Length LSB (4)                                                                                                                                           | 0     | 0     | 0     | 0     | 0     | 1     | 0     | 0     |
-| byte 3           | ‘M’                                                                                                                                                      | 0     | 1     | 0     | 0     | 1     | 1     | 0     | 1     |
-| byte 4           | ‘Q’                                                                                                                                                      | 0     | 1     | 0     | 1     | 0     | 0     | 0     | 1     |
-| byte 5           | ‘T’                                                                                                                                                      | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
-| byte 6           | ‘T’                                                                                                                                                      | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
+| byte 3           | `M`                                                                                                                                                      | 0     | 1     | 0     | 0     | 1     | 1     | 0     | 1     |
+| byte 4           | `Q`                                                                                                                                                      | 0     | 1     | 0     | 1     | 0     | 0     | 0     | 1     |
+| byte 5           | `T`                                                                                                                                                      | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
+| byte 6           | `T`                                                                                                                                                      | 0     | 1     | 0     | 1     | 0     | 1     | 0     | 0     |
 | Protocol Version |                                                                                                                                                          |       |       |       |       |       |       |       |       |
 |                  | **Description**                                                                                                                                          | **7** | **6** | **5** | **4** | **3** | **2** | **1** | **0** |
 | byte 7           | Version (5)                                                                                                                                              | 0     | 0     | 0     | 0     | 0     | 1     | 0     | 1     |
@@ -931,11 +931,11 @@ The ClientID MUST be present and is the first field in the CONNECT packet Payloa
 
 The ClientID MUST be a UTF-8 Encoded String as defined in [section 1.5.4](#_UTF-8_Encoded_String) \[MQTT-3.1.3-4\].
 
-The Server MUST allow ClientID’s which are between 1 and 23 UTF-8 encoded bytes in length, and that contain only the characters
+The Server MUST allow ClientID`s which are between 1 and 23 UTF-8 encoded bytes in length, and that contain only the characters
 
 "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" \[MQTT-3.1.3-5\].
 
-The Server MAY allow ClientID’s that contain more than 23 encoded bytes. The Server MAY allow ClientID’s that contain characters not included in the list given above.
+The Server MAY allow ClientID`s that contain more than 23 encoded bytes. The Server MAY allow ClientID`s that contain characters not included in the list given above.
 
 A Server MAY allow a Client to supply a ClientID that has a length of zero bytes, however if it does so the Server MUST treat this as a special case and assign a unique ClientID to that Client \[MQTT-3.1.3-6\]. It MUST then process the CONNECT packet as if the Client had provided that unique ClientID, and MUST return the Assigned Client Identifier in the CONNACK packet \[MQTT-3.1.3-7\].
 
@@ -959,7 +959,7 @@ The length of the Properties in the Will Properties encoded as a Variable Byte I
 
 Followed by the Four Byte Integer representing the Will Delay Interval in seconds. It is a Protocol Error to include the Will Delay Interval more than once. If the Will Delay Interval is absent, the default value is 0 and there is no delay before the Will Message is published.
 
-The Server delays publishing the Client’s Will Message until the Will Delay Interval has passed or the Session ends, whichever happens first. If a new Network Connection to this Session is made before the Will Delay Interval has passed, the Server MUST NOT send the Will Message \[MQTT-3.1.3-9\].
+The Server delays publishing the Client`s Will Message until the Will Delay Interval has passed or the Session ends, whichever happens first. If a new Network Connection to this Session is made before the Will Delay Interval has passed, the Server MUST NOT send the Will Message \[MQTT-3.1.3-9\].
 
 **Non-normative comment**
 
@@ -1461,7 +1461,7 @@ The Topic Name MUST be present as the first field in the PUBLISH packet Variable
 
 The Topic Name in the PUBLISH packet MUST NOT contain wildcard characters \[MQTT-3.3.2-2\].
 
-The Topic Name in a PUBLISH packet sent by a Server to a subscribing Client MUST match the Subscription’s Topic Filter according to the matching process defined in [section 4.7](#_Topic_Names_and) \[MQTT-3.3.2-3\]. However, as the Server is permitted to map the Topic Name to another name, it might not be the same as the Topic Name in the original PUBLISH packet.
+The Topic Name in a PUBLISH packet sent by a Server to a subscribing Client MUST match the Subscription`s Topic Filter according to the matching process defined in [section 4.7](#_Topic_Names_and) \[MQTT-3.3.2-3\]. However, as the Server is permitted to map the Topic Name to another name, it might not be the same as the Topic Name in the original PUBLISH packet.
 
 To reduce the size of the PUBLISH packet the sender can use a Topic Alias. The Topic Alias is described in [section 3.3.2.3.4](#_Topic_Alias). It is a Protocol Error if the Topic Name is zero length and there is no Topic Alias.
 
@@ -1591,7 +1591,7 @@ The UTF-8 Encoded String may use a MIME content type string to describe the cont
 
 **Non-normative example**
 
-Figure 3-9 shows an example of a PUBLISH packet with the Topic Name set to “a/b”, the Packet Identifier set to 10, and having no properties.
+Figure 3-9 shows an example of a PUBLISH packet with the Topic Name set to `a/b`, the Packet Identifier set to 10, and having no properties.
 
 Figure 3‑9 - PUBLISH packet Variable Header non-normative example
 
@@ -1601,9 +1601,9 @@ Figure 3‑9 - PUBLISH packet Variable Header non-normative example
 | Topic Name        |                            |       |       |       |       |       |       |       |       |
 | byte 1            | Length MSB (0)             | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 2            | Length LSB (3)             | 0     | 0     | 0     | 0     | 0     | 0     | 1     | 1     |
-| byte 3            | ‘a’ (0x61)                 | 0     | 1     | 1     | 0     | 0     | 0     | 0     | 1     |
-| byte 4            | ‘/’ (0x2F)                 | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
-| byte 5            | ‘b’ (0x62)                 | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 0     |
+| byte 3            | `a` (0x61)                 | 0     | 1     | 1     | 0     | 0     | 0     | 0     | 1     |
+| byte 4            | `/` (0x2F)                 | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
+| byte 5            | `b` (0x62)                 | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 0     |
 | Packet Identifier |                            |       |       |       |       |       |       |       |       |
 | byte 6            | Packet Identifier MSB (0)  | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 7            | Packet Identifier LSB (10) | 0     | 0     | 0     | 0     | 1     | 0     | 1     | 0     |
@@ -1631,7 +1631,7 @@ The Client uses a PUBLISH packet to send an Application Message to the Server, f
 
 The Server uses a PUBLISH packet to send an Application Message to each Client which has a matching subscription. The PUBLISH packet includes the Subscription Identifier carried in the SUBSCRIBE packet, if there was one.
 
-When Clients make subscriptions with Topic Filters that include wildcards, it is possible for a Client’s subscriptions to overlap so that a published message might match multiple filters. In this case the Server MUST deliver the message to the Client respecting the maximum QoS of all the matching subscriptions \[MQTT-3.3.4-2\]. In addition, the Server MAY deliver further copies of the message, one for each additional matching subscription and respecting the subscription’s QoS in each case.
+When Clients make subscriptions with Topic Filters that include wildcards, it is possible for a Client`s subscriptions to overlap so that a published message might match multiple filters. In this case the Server MUST deliver the message to the Client respecting the maximum QoS of all the matching subscriptions \[MQTT-3.3.4-2\]. In addition, the Server MAY deliver further copies of the message, one for each additional matching subscription and respecting the subscription`s QoS in each case.
 
 If a Client receives an unsolicited Application Message (not resulting from a subscription) which has a QoS greater than Maximum QoS, it uses a DISCONNECT packet with Reason Code 0x9B (QoS not supported ) as described in [section 4.13](#S4_13_Errors) Handling errors.
 
@@ -2011,7 +2011,7 @@ This is described in [section 4.3.3](#_QoS_2:_Exactly).
 
 ## 3.8 SUBSCRIBE - Subscribe request
 
-The SUBSCRIBE packet is sent from the Client to the Server to create one or more Subscriptions. Each Subscription registers a Client’s interest in one or more Topics. The Server sends PUBLISH packets to the Client to forward Application Messages that were published to Topics that match these Subscriptions. The SUBSCRIBE packet also specifies (for each Subscription) the maximum QoS with which the Server can send Application Messages to the Client.
+The SUBSCRIBE packet is sent from the Client to the Server to create one or more Subscriptions. Each Subscription registers a Client`s interest in one or more Topics. The Server sends PUBLISH packets to the Client to forward Application Messages that were published to Topics that match these Subscriptions. The SUBSCRIBE packet also specifies (for each Subscription) the maximum QoS with which the Server can send Application Messages to the Client.
 
 ### 3.8.1 SUBSCRIBE Fixed Header
 
@@ -2137,7 +2137,7 @@ NL means No Local.
 
 **Non-normative example**
 
-Figure 3.21 show the SUBSCRIBE Payload example with two Topic Filters. The first is “a/b” with QoS 1, and the second is “c/d” with QoS 2.
+Figure 3.21 show the SUBSCRIBE Payload example with two Topic Filters. The first is `a/b` with QoS 1, and the second is `c/d` with QoS 2.
 
 [](#_Table_3.4_-)
 
@@ -2149,17 +2149,17 @@ Figure 3‑21 - Payload byte format non-normative example
 | Topic Filter         |                          |       |       |       |       |       |       |       |       |
 | byte 1               | Length MSB (0)           | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 2               | Length LSB (3)           | 0     | 0     | 0     | 0     | 0     | 0     | 1     | 1     |
-| byte 3               | ‘a’ (0x61)               | 0     | 1     | 1     | 0     | 0     | 0     | 0     | 1     |
-| byte 4               | ‘/’ (0x2F)               | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
-| byte 5               | ‘b’ (0x62)               | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 0     |
+| byte 3               | `a` (0x61)               | 0     | 1     | 1     | 0     | 0     | 0     | 0     | 1     |
+| byte 4               | `/` (0x2F)               | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
+| byte 5               | `b` (0x62)               | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 0     |
 | Subscription Options |                          |       |       |       |       |       |       |       |       |
 | byte 6               | Subscription Options (1) | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 1     |
 | Topic Filter         |                          |       |       |       |       |       |       |       |       |
 | byte 7               | Length MSB (0)           | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 8               | Length LSB (3)           | 0     | 0     | 0     | 0     | 0     | 0     | 1     | 1     |
-| byte 9               | ‘c’ (0x63)               | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 1     |
-| byte 10              | ‘/’ (0x2F)               | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
-| byte 11              | ‘d’ (0x64)               | 0     | 1     | 1     | 0     | 0     | 1     | 0     | 0     |
+| byte 9               | `c` (0x63)               | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 1     |
+| byte 10              | `/` (0x2F)               | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
+| byte 11              | `d` (0x64)               | 0     | 1     | 1     | 0     | 0     | 1     | 0     | 0     |
 | Subscription Options |                          |       |       |       |       |       |       |       |       |
 | byte 12              | Subscription Options (2) | 0     | 0     | 0     | 0     | 0     | 0     | 1     | 0     |
 
@@ -2169,13 +2169,13 @@ When the Server receives a SUBSCRIBE packet from a Client, the Server MUST respo
 
 The Server is permitted to start sending PUBLISH packets matching the Subscription before the Server sends the SUBACK packet.
 
-If a Server receives a SUBSCRIBE packet containing a Topic Filter that is identical to a Non‑shared Subscription’s Topic Filter for the current Session, then it MUST replace that existing Subscription with a new Subscription \[MQTT-3.8.4-3\]. The Topic Filter in the new Subscription will be identical to that in the previous Subscription, although its Subscription Options could be different. If the Retain Handling option is 0, any existing retained messages matching the Topic Filter MUST be re-sent, but Applicaton Messages MUST NOT be lost due to replacing the Subscription \[MQTT-3.8.4-4\].
+If a Server receives a SUBSCRIBE packet containing a Topic Filter that is identical to a Non‑shared Subscription`s Topic Filter for the current Session, then it MUST replace that existing Subscription with a new Subscription \[MQTT-3.8.4-3\]. The Topic Filter in the new Subscription will be identical to that in the previous Subscription, although its Subscription Options could be different. If the Retain Handling option is 0, any existing retained messages matching the Topic Filter MUST be re-sent, but Applicaton Messages MUST NOT be lost due to replacing the Subscription \[MQTT-3.8.4-4\].
 
 If a Server receives a Non‑shared Topic Filter that is not identical to any Topic Filter for the current Session, a new Non-shared Subscription is created. If the Retain Handling option is not 2, all matching retained messages are sent to the Client.
 
 If a Server receives a Topic Filter that is identical to the Topic Filter for a Shared Subscription that already exists on the Server, the Session is added as a subscriber to that Shared Subscription. No retained messages are sent.
 
-If a Server receives a Shared Subscription Topic Filter that is not identical to any existing Shared Subscription’s Topic Filter, a new Shared Subscription is created. The Session is added as a subscriber to that Shared Subscription. No retained messages are sent.
+If a Server receives a Shared Subscription Topic Filter that is not identical to any existing Shared Subscription`s Topic Filter, a new Shared Subscription is created. The Session is added as a subscriber to that Shared Subscription. No retained messages are sent.
 
 Refer to [section 4.8](#_Shared_Subscriptions) for more details on Shared Subscriptions.
 
@@ -2195,9 +2195,9 @@ If the subscribing Client has been granted maximum QoS 0, then an Application Me
 
 Subscribing to a Topic Filter at QoS 2 is equivalent to saying "I would like to receive Messages matching this filter at the QoS with which they were published". This means a publisher is responsible for determining the maximum QoS a Message can be delivered at, but a subscriber is able to require that the Server downgrades the QoS to one more suitable for its usage.
 
-The Subscription Identifiers are part of the Session State in the Server and are returned to the Client receiving a matching PUBLISH packet. They are removed from the Server’s Session State when the Server receives an UNSUBSCRIBE packet, when the Server receives a SUBSCRIBE packet from the Client for the same Topic Filter but with a different Subscription Identifier or with no Subscription Identifier, or when the Server sends Session Present 0 in a CONNACK packet.
+The Subscription Identifiers are part of the Session State in the Server and are returned to the Client receiving a matching PUBLISH packet. They are removed from the Server`s Session State when the Server receives an UNSUBSCRIBE packet, when the Server receives a SUBSCRIBE packet from the Client for the same Topic Filter but with a different Subscription Identifier or with no Subscription Identifier, or when the Server sends Session Present 0 in a CONNACK packet.
 
-The Subscription Identifiers do not form part of the Client’s Session State in the Client. In a useful implementation, a Client will associate the Subscription Identifiers with other Client side state, this state is typically removed when the Client unsubscribes, when the Client subscribes for the same Topic Filter with a different identifier or no identifier, or when the Client receives Session Present 0 in a CONNACK packet.
+The Subscription Identifiers do not form part of the Client`s Session State in the Client. In a useful implementation, a Client will associate the Subscription Identifiers with other Client side state, this state is typically removed when the Client unsubscribes, when the Client subscribes for the same Topic Filter with a different identifier or no identifier, or when the Client receives Session Present 0 in a CONNACK packet.
 
 The Server need not use the same set of Subscription Identifiers in the retransmitted PUBLISH packet. The Client can remake a Subscription by sending a SUBSCRIBE packet containing a Topic Filter that is identical to the Topic Filter of an existing Subscription in the current Session. If the Client remade a subscription after the initial transmission of a PUBLISH packet and used a different Subscription Identifier, then the Server is allowed to use the identifiers from the first transmission in any retransmission. Alternatively, the Server is allowed to use the new identifiers during a retransmission. The Server is not allowed to revert to the old identifier after it has sent a PUBLISH packet containing the new one.
 
@@ -2347,7 +2347,7 @@ The Payload of an UNSUBSCRIBE packet MUST contain at least one Topic Filter \[MQ
 
 **Non-normative example**
 
-Figure 3.30 shows the Payload for an UNSUBSCRIBE packet with two Topic Filters “a/b” and “c/d”.[](#_Table3.6_-_Payload)
+Figure 3.30 shows the Payload for an UNSUBSCRIBE packet with two Topic Filters `a/b` and `c/d`.[](#_Table3.6_-_Payload)
 
 Figure 3.30 - Payload byte format non-normative example
 
@@ -2357,15 +2357,15 @@ Figure 3.30 - Payload byte format non-normative example
 | Topic Filter |                 |       |       |       |       |       |       |       |       |
 | byte 1       | Length MSB (0)  | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 2       | Length LSB (3)  | 0     | 0     | 0     | 0     | 0     | 0     | 1     | 1     |
-| byte 3       | ‘a’ (0x61)      | 0     | 1     | 1     | 0     | 0     | 0     | 0     | 1     |
-| byte 4       | ‘/’ (0x2F)      | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
-| byte 5       | ‘b’ (0x62)      | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 0     |
+| byte 3       | `a` (0x61)      | 0     | 1     | 1     | 0     | 0     | 0     | 0     | 1     |
+| byte 4       | `/` (0x2F)      | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
+| byte 5       | `b` (0x62)      | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 0     |
 | Topic Filter |                 |       |       |       |       |       |       |       |       |
 | byte 6       | Length MSB (0)  | 0     | 0     | 0     | 0     | 0     | 0     | 0     | 0     |
 | byte 7       | Length LSB (3)  | 0     | 0     | 0     | 0     | 0     | 0     | 1     | 1     |
-| byte 8       | ‘c’ (0x63)      | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 1     |
-| byte 9       | ‘/’ (0x2F)      | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
-| byte 10      | ‘d’ (0x64)      | 0     | 1     | 1     | 0     | 0     | 1     | 0     | 0     |
+| byte 8       | `c` (0x63)      | 0     | 1     | 1     | 0     | 0     | 0     | 1     | 1     |
+| byte 9       | `/` (0x2F)      | 0     | 0     | 1     | 0     | 1     | 1     | 1     | 1     |
+| byte 10      | `d` (0x64)      | 0     | 1     | 1     | 0     | 0     | 1     | 0     | 0     |
 
 ### 3.10.4 UNSUBSCRIBE Actions
 
@@ -2861,7 +2861,7 @@ In the QoS 1 delivery protocol, the sender
 
 - MUST send a PUBLISH packet containing this Packet Identifier with QoS 1 and DUP flag set to 0 \[MQTT-4.3.2-2\].
 
-- MUST treat the PUBLISH packet as “unacknowledged” until it has received the corresponding PUBACK packet from the receiver. Refer to [section 4.4](#_Message_delivery_retry) for a discussion of unacknowledged messages \[MQTT-4.3.2-3\].
+- MUST treat the PUBLISH packet as `unacknowledged` until it has received the corresponding PUBACK packet from the receiver. Refer to [section 4.4](#_Message_delivery_retry) for a discussion of unacknowledged messages \[MQTT-4.3.2-3\].
 
 The Packet Identifier becomes available for reuse once the sender has received the PUBACK packet.
 
@@ -2895,9 +2895,9 @@ In the QoS 2 delivery protocol, the sender:
 
 - MUST assign an unused Packet Identifier when it has a new Application Message to publish \[MQTT-4.3.3-1\].
 - MUST send a PUBLISH packet containing this Packet Identifier with QoS 2 and DUP flag set to 0 \[MQTT-4.3.3-2\].
-- MUST treat the PUBLISH packet as “unacknowledged” until it has received the corresponding PUBREC packet from the receiver \[MQTT-4.3.3-3\]. Refer to [section 4.4](#_Figure_4.3_–) for a discussion of unacknowledged messages.
+- MUST treat the PUBLISH packet as `unacknowledged` until it has received the corresponding PUBREC packet from the receiver \[MQTT-4.3.3-3\]. Refer to [section 4.4](#_Figure_4.3_–) for a discussion of unacknowledged messages.
 - MUST send a PUBREL packet when it receives a PUBREC packet from the receiver with a Reason Code value less than 0x80. This PUBREL packet MUST contain the same Packet Identifier as the original PUBLISH packet \[MQTT-4.3.3-4\].
-- MUST treat the PUBREL packet as “unacknowledged” until it has received the corresponding PUBCOMP packet from the receiver \[MQTT-4.3.3-5\].
+- MUST treat the PUBREL packet as `unacknowledged` until it has received the corresponding PUBCOMP packet from the receiver \[MQTT-4.3.3-5\].
 - MUST NOT re-send the PUBLISH once it has sent the corresponding PUBREL packet \[MQTT-4.3.3-6\].
 - MUST NOT apply Message expiry if a PUBLISH packet has been sent \[MQTT-4.3.3-7\].
 
@@ -2964,67 +2964,67 @@ By default, a Server MUST treat every Topic as an Ordered Topic when it is forwa
 
 The rules listed above ensure that when a stream of messages is published and subscribed to an Ordered Topic with QoS 1, the final copy of each message received by the subscribers will be in the order that they were published. If the message is re-sent the duplicate message can be received after one of the earlier messages is received. For example, a publisher might send messages in the order 1,2,3,4 but the subscriber might receive them in the order 1,2,3,2,3,4 if there is a network disconnection after message 3 has been sent.
 
-If both Client and Server set Receive Maximum to 1, they make sure that no more than one message is “in-flight” at any one time. In this case no QoS 1 message will be received after any later one even on re-connection. For example a subscriber might receive them in the order 1,2,3,3,4 but not 1,2,3,2,3,4. Refer to [section 4.9](#_Flow_Control) Flow Control for details of how the Receive Maximum is used.
+If both Client and Server set Receive Maximum to 1, they make sure that no more than one message is `in-flight` at any one time. In this case no QoS 1 message will be received after any later one even on re-connection. For example a subscriber might receive them in the order 1,2,3,3,4 but not 1,2,3,2,3,4. Refer to [section 4.9](#_Flow_Control) Flow Control for details of how the Receive Maximum is used.
 
 ## 4.7 Topic Names and Topic Filters
 
 ### 4.7.1 Topic wildcards
 
-The topic level separator is used to introduce structure into the Topic Name. If present, it divides the Topic Name into multiple “topic levels”.
+The topic level separator is used to introduce structure into the Topic Name. If present, it divides the Topic Name into multiple `topic levels`.
 
-A subscription’s Topic Filter can contain special wildcard characters, which allow a Client to subscribe to multiple topics at once.
+A subscription`s Topic Filter can contain special wildcard characters, which allow a Client to subscribe to multiple topics at once.
 
 The wildcard characters can be used in Topic Filters, but MUST NOT be used within a Topic Name \[MQTT-4.7.0-1\].
 
 #### 4.7.1.1 Topic level separator
 
-The forward slash (‘/’ U+002F) is used to separate each level within a topic tree and provide a hierarchical structure to the Topic Names. The use of the topic level separator is significant when either of the two wildcard characters is encountered in Topic Filters specified by subscribing Clients. Topic level separators can appear anywhere in a Topic Filter or Topic Name. Adjacent Topic level separators indicate a zero-length topic level.
+The forward slash (`/` U+002F) is used to separate each level within a topic tree and provide a hierarchical structure to the Topic Names. The use of the topic level separator is significant when either of the two wildcard characters is encountered in Topic Filters specified by subscribing Clients. Topic level separators can appear anywhere in a Topic Filter or Topic Name. Adjacent Topic level separators indicate a zero-length topic level.
 
 #### 4.7.1.2 Multi-level wildcard
 
-The number sign (‘#’ U+0023) is a wildcard character that matches any number of levels within a topic. The multi-level wildcard represents the parent and any number of child levels. The multi-level wildcard character MUST be specified either on its own or following a topic level separator. In either case it MUST be the last character specified in the Topic Filter \[MQTT-4.7.1-1\].
+The number sign (`#` U+0023) is a wildcard character that matches any number of levels within a topic. The multi-level wildcard represents the parent and any number of child levels. The multi-level wildcard character MUST be specified either on its own or following a topic level separator. In either case it MUST be the last character specified in the Topic Filter \[MQTT-4.7.1-1\].
 
 **Non-normative comment**
 
-For example, if a Client subscribes to “sport/tennis/player1/#”, it would receive messages published using these Topic Names:
+For example, if a Client subscribes to `sport/tennis/player1/#`, it would receive messages published using these Topic Names:
 
-- “sport/tennis/player1”
+- `sport/tennis/player1`
 
-- “sport/tennis/player1/ranking
+- `sport/tennis/player1/ranking
 
-- “sport/tennis/player1/score/wimbledon”
+- `sport/tennis/player1/score/wimbledon`
 
 **Non-normative comment**
 
-- “sport/#” also matches the singular “sport”, since # includes the parent level.
+- `sport/#` also matches the singular `sport`, since # includes the parent level.
 
-- “#” is valid and will receive every Application Message
+- `#` is valid and will receive every Application Message
 
-- “sport/tennis/#” is valid
+- `sport/tennis/#` is valid
 
-- “sport/tennis#” is not valid
+- `sport/tennis#` is not valid
 
-- “sport/tennis/#/ranking” is not valid
+- `sport/tennis/#/ranking` is not valid
 
 #### 4.7.1.3 Single-level wildcard
 
-The plus sign (‘+’ U+002B) is a wildcard character that matches only one topic level.
+The plus sign (`+` U+002B) is a wildcard character that matches only one topic level.
 
 The single-level wildcard can be used at any level in the Topic Filter, including first and last levels. Where it is used, it MUST occupy an entire level of the filter \[MQTT-4.7.1-2\]. It can be used at more than one level in the Topic Filter and can be used in conjunction with the multi-level wildcard.
 
 **Non-normative comment**
 
-For example, “sport/tennis/+” matches “sport/tennis/player1” and “sport/tennis/player2”, but not “sport/tennis/player1/ranking”. Also, because the single-level wildcard matches only a single level, “sport/+” does not match “sport” but it does match “sport/”.
+For example, `sport/tennis/+` matches `sport/tennis/player1` and `sport/tennis/player2`, but not `sport/tennis/player1/ranking`. Also, because the single-level wildcard matches only a single level, `sport/+` does not match `sport` but it does match `sport/`.
 
-- “+” is valid
+- `+` is valid
 
-- “+/tennis/#” is valid
+- `+/tennis/#` is valid
 
-- “sport+” is not valid
+- `sport+` is not valid
 
-- “sport/+/player1” is valid
+- `sport/+/player1` is valid
 
-- “/finance” matches “+/+” and “/+”, but not “+”
+- `/finance` matches `+/+` and `/+`, but not `+`
 
 ### 4.7.2 Topics beginning with $
 
@@ -3038,15 +3038,15 @@ The Server MUST NOT match Topic Filters starting with a wildcard character (# or
 
 **Non-normative comment**
 
-- A subscription to “#” will not receive any messages published to a topic beginning with a $
+- A subscription to `#` will not receive any messages published to a topic beginning with a $
 
-- A subscription to “+/monitor/Clients” will not receive any messages published to “$SYS/monitor/Clients”
+- A subscription to `+/monitor/Clients` will not receive any messages published to `$SYS/monitor/Clients`
 
-- A subscription to “$SYS/#” will receive messages published to topics beginning with “$SYS/”
+- A subscription to `$SYS/#` will receive messages published to topics beginning with `$SYS/`
 
-- A subscription to “$SYS/monitor/+” will receive messages published to “$SYS/monitor/Clients”
+- A subscription to `$SYS/monitor/+` will receive messages published to `$SYS/monitor/Clients`
 
-- For a Client to receive messages from topics that begin with $SYS/ and from topics that don’t begin with a $, it has to subscribe to both “#” and “$SYS/#”
+- For a Client to receive messages from topics that begin with $SYS/ and from topics that don`t begin with a $, it has to subscribe to both `#` and `$SYS/#`
 
 ### 4.7.3 Topic semantic and usage
 
@@ -3058,9 +3058,9 @@ The following rules apply to Topic Names and Topic Filters:
 
 - Topic Names and Topic Filters can include the space character
 
-- A leading or trailing ‘/’ creates a distinct Topic Name or Topic Filter
+- A leading or trailing `/` creates a distinct Topic Name or Topic Filter
 
-- A Topic Name or Topic Filter consisting only of the ‘/’ character is valid
+- A Topic Name or Topic Filter consisting only of the `/` character is valid
 
 - Topic Names and Topic Filters MUST NOT include the null character (Unicode U+0000) [\[Unicode\]](#Unicode) \[MQTT-4.7.3-2\][](#Unicode)
 
@@ -3076,11 +3076,11 @@ The UTF-8 encoding rules mean that the comparison of Topic Filter and Topic Name
 
 **Non-normative comment**
 
-- “ACCOUNTS” and “Accounts” are two different Topic Names
+- `ACCOUNTS` and `Accounts` are two different Topic Names
 
-- “Accounts payable” is a valid Topic Name
+- `Accounts payable` is a valid Topic Name
 
-- “/finance” is different from “finance”
+- `/finance` is different from `finance`
 
 An Application Message is sent to each Client Subscription whose Topic Filter matches the Topic Name attached to an Application Message. The topic resource MAY be either predefined in the Server by an administrator or it MAY be dynamically created by the Server when it receives the first subscription or an Application Message with that Topic Name. The Server MAY also use a security component to authorize particular actions on the topic resource for a given Client.
 
@@ -3242,7 +3242,7 @@ The Server Reference is a UTF-8 Encoded String. The value of this string is a sp
 
 **Non-normative comment**
 
-It is recommended that each reference consists of a name optionally followed by a colon and a port number. If the name contains a colon the name string can be enclosed within square brackets (“\[“ and ‘\]”). A name enclosed by square brackets cannot contain the right square bracket (“\]”) character. This is used to represent an IPv6 literal address which uses colon separators. This is a simplified version of an URI authority as described in [\[RFC3986\]](#RFC3986).
+It is recommended that each reference consists of a name optionally followed by a colon and a port number. If the name contains a colon the name string can be enclosed within square brackets (`\[` and `\]`). A name enclosed by square brackets cannot contain the right square bracket (`\]`) character. This is used to represent an IPv6 literal address which uses colon separators. This is a simplified version of an URI authority as described in [\[RFC3986\]](#RFC3986).
 
 **Non-normative comment**
 
@@ -3404,7 +3404,7 @@ There are a number of threats that solution providers should consider. For examp
 
 - Devices could be compromised
 - Data at rest in Clients and Servers might be accessible
-- Protocol behaviors could have side effects (e.g. “timing attacks”)
+- Protocol behaviors could have side effects (e.g. `timing attacks`)
 - Denial of Service (DoS) attacks
 - Communications could be intercepted, altered, re-routed or disclosed
 - Injection of spoofed MQTT Control Packets
@@ -3432,13 +3432,13 @@ Guidance on using MQTT within the NIST Cyber Security Framework [\[NISTCSF\]](#N
 
 Advanced Encryption Standard [\[AES\]](#AES) is the most widely adopted encryption algorithm. There is hardware support for AES in many processors, but not commonly for embedded processors. The encryption algorithm ChaCha20 \[[CHACHA20](#CHACHA20)\] encrypts and decrypts much faster in software, but is not as widely available as AES.
 
-ISO 29192 [\[ISO29192\]](#ISO29192) makes recommendations for cryptographic primitives specifically tuned to perform on constrained “low end” devices.
+ISO 29192 [\[ISO29192\]](#ISO29192) makes recommendations for cryptographic primitives specifically tuned to perform on constrained `low end` devices.
 
 [](#ISO29192)
 
 ## 5.4 Implementation notes
 
-There are many security concerns to consider when implementing or using MQTT. The following section should not be considered a “check list”.
+There are many security concerns to consider when implementing or using MQTT. The following section should not be considered a `check list`.
 
 An implementation might want to achieve some, or all, of the following:
 
@@ -3504,7 +3504,7 @@ Client and Server implementations using TLS [\[RFC5246\]](#RFC5246) should provi
 
 Client and Server implementations using TLS can choose to provide capabilities to check Certificate Revocation Lists (CRLs [\[RFC5280\]](#RFC5280)) and Online Certificate Status Protocol (OSCP) [\[RFC6960\]](#RFC6960) to prevent revoked certificates from being used.[](#RFC5246)[](#RFC5280)[](#RFC6960)
 
-Physical deployments might combine tamper-proof hardware with the transmission of specific data in Application Messages. For example, a meter might have an embedded GPS to ensure it is not used in an unauthorized location. [\[IEEE8021AR\]](#IEEE8021AR) is a standard for implementing mechanisms to authenticate a device’s identity using a cryptographically bound identifier.
+Physical deployments might combine tamper-proof hardware with the transmission of specific data in Application Messages. For example, a meter might have an embedded GPS to ensure it is not used in an unauthorized location. [\[IEEE8021AR\]](#IEEE8021AR) is a standard for implementing mechanisms to authenticate a device`s identity using a cryptographically bound identifier.
 
 [](#IEEE8021AR)
 
@@ -3646,15 +3646,15 @@ If MQTT is transported over a WebSocket [\[RFC6455\]](#RFC6455) connection, the 
 
 - A single WebSocket data frame can contain multiple or partial MQTT Control Packets. The receiver MUST NOT assume that MQTT Control Packets are aligned on WebSocket frame boundaries \[MQTT-6.0.0-2\].
 
-- The Client MUST include “mqtt” in the list of WebSocket Sub Protocols it offers \[MQTT-6.0.0-3\].
+- The Client MUST include `mqtt` in the list of WebSocket Sub Protocols it offers \[MQTT-6.0.0-3\].
 
-- The WebSocket Subprotocol name selected and returned by the Server MUST be “mqtt” \[MQTT-6.0.0-4\].
+- The WebSocket Subprotocol name selected and returned by the Server MUST be `mqtt` \[MQTT-6.0.0-4\].
 
 - The WebSocket URI used to connect the Client and Server has no impact on the MQTT protocol.
 
 ## 6.1 IANA considerations
 
-This specification requests IANA to modify the registration of the WebSocket MQTT sub-protocol under the “WebSocket Subprotocol Name” registry with the following data:
+This specification requests IANA to modify the registration of the WebSocket MQTT sub-protocol under the `WebSocket Subprotocol Name` registry with the following data:
 
 Figure 6.6‑1 - IANA WebSocket Identifier
 

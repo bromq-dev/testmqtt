@@ -10,7 +10,8 @@ var rootCmd = &cobra.Command{
 	Long: `testmqtt is a comprehensive MQTT broker testing tool that provides:
 - Conformance testing for MQTT 3.1.1 and MQTT 5.0
 - Performance benchmarking
-- Stress testing`,
+- Stress testing
+- Traffic simulation (bridge messages between brokers)`,
 	SilenceErrors: true,
 }
 
@@ -21,4 +22,5 @@ func Execute() error {
 func init() {
 	rootCmd.AddCommand(conformanceCmd)
 	rootCmd.AddCommand(performanceCmd)
+	rootCmd.AddCommand(simCmd)
 }
